@@ -3,6 +3,9 @@ import {
   HiOutlineCloudUpload,
   HiOutlineExclamation,
   HiOutlineTrendingUp,
+  HiOutlineChevronDown,
+  HiOutlineChevronLeft,
+  HiOutlineChevronRight,
 } from 'react-icons/hi';
 import { TbBugOff, TbAnalyze } from 'react-icons/tb';
 import {
@@ -25,12 +28,22 @@ const bugTrendData = [
   { date: 'Mar 26', actual: null, forecast: 24 },
 ];
 
-const activities = [
-  { text: 'DMA controller flagged as high risk — score 92', time: '12 min ago', color: 'red' },
-  { text: 'Bug #1247 resolved in Cache subsystem', time: '28 min ago', color: 'green' },
-  { text: 'New regression data uploaded for PCIe v3.1', time: '1 hr ago', color: 'cyan' },
-  { text: 'Tapeout readiness score updated to 67/100', time: '2 hrs ago', color: 'orange' },
-  { text: 'Root cause identified for timing violation in ALU', time: '3 hrs ago', color: 'green' },
+const riskModulesDetailed = [
+  { name: 'USB_PHY', risk: 'CRITICAL', bugs: 14, cov: 72, color: 'red' },
+  { name: 'CPU_CORE', risk: 'CRITICAL', bugs: 11, cov: 68, color: 'red' },
+  { name: 'DDR_CTRL', risk: 'HIGH', bugs: 8, cov: 79, color: 'orange' },
+  { name: 'PCIe_MAC', risk: 'HIGH', bugs: 6, cov: 81, color: 'orange' },
+  { name: 'AXI_BUS', risk: 'MEDIUM', bugs: 4, cov: 88, color: 'yellow' },
+  { name: 'CLK_GEN', risk: 'LOW', bugs: 1, cov: 96, color: 'green' },
+  { name: 'UART', risk: 'LOW', bugs: 2, cov: 94, color: 'green' },
+  { name: 'SPI', risk: 'LOW', bugs: 0, cov: 98, color: 'green' },
+];
+
+const alerts = [
+  { text: 'P0 regression failure in USB_PHY TX path', module: 'USB_PHY', time: '2m ago', status: 'red' },
+  { text: 'CPU_CORE branch coverage below threshold', module: 'CPU_CORE', time: '18m ago', status: 'red' },
+  { text: 'Critical bug #291 approaching 7-day SLA', module: 'DDR_CTRL', time: '45m ago', status: 'red' },
+  { text: 'DDR_CTRL timing violation in stress sim', module: 'DDR_CTRL', time: '1h ago', status: 'orange' },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {

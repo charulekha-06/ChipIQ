@@ -311,13 +311,31 @@
 }
 
 /* Tapeout Gauge cleanup */
+.tapeout-card h3 {
+  margin-bottom: 20px;
+}
+
+.tapeout-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
 .tapeout-gauge {
   position: relative;
   width: 140px;
   height: 140px;
-  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .gauge-value {
   font-size: 32px;
+}
+
+.tapeout-metrics {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }

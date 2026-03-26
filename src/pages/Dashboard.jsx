@@ -175,50 +175,52 @@ export default function Dashboard() {
 
         <div className="chart-card tapeout-card">
           <h3>Tapeout Readiness</h3>
-          <div className="tapeout-gauge">
-            <svg viewBox="0 0 150 150">
-              <defs>
-                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#ef4444" />
-                  <stop offset="50%" stopColor="#f59e0b" />
-                  <stop offset="100%" stopColor="#22c55e" />
-                </linearGradient>
-              </defs>
-              <circle className="gauge-bg" cx="75" cy="75" r="65" />
-              <circle
-                className="gauge-fill"
-                cx="75" cy="75" r="65"
-                strokeDasharray={circumference}
-                strokeDashoffset={dashOffset}
-              />
-            </svg>
-            <div className="gauge-center">
-              <div className="gauge-value">{tapeoutScore}</div>
-              <div className="gauge-label">Tapeout Score</div>
+          <div className="tapeout-content">
+            <div className="tapeout-gauge">
+              <svg viewBox="0 0 150 150">
+                <defs>
+                  <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#ef4444" />
+                    <stop offset="50%" stopColor="#f59e0b" />
+                    <stop offset="100%" stopColor="#22c55e" />
+                  </linearGradient>
+                </defs>
+                <circle className="gauge-bg" cx="75" cy="75" r="65" />
+                <circle
+                  className="gauge-fill"
+                  cx="75" cy="75" r="65"
+                  strokeDasharray={circumference}
+                  strokeDashoffset={dashOffset}
+                />
+              </svg>
+              <div className="gauge-center">
+                <div className="gauge-value">{tapeoutScore}</div>
+                <div className="gauge-label">Tapeout Score</div>
+              </div>
             </div>
-          </div>
 
-          <div className="tapeout-metrics">
-            <div className="metric-row">
-              <span className="metric-label">Bug trend</span>
-              <div className="metric-bar-container">
-                <div className="metric-bar blue" style={{ width: '60%' }}></div>
+            <div className="tapeout-metrics">
+              <div className="metric-row">
+                <span className="metric-label">Bug trend</span>
+                <div className="metric-bar-container">
+                  <div className="metric-bar blue" style={{ width: '60%' }}></div>
+                </div>
+                <span className="metric-value blue">60%</span>
               </div>
-              <span className="metric-value blue">60%</span>
-            </div>
-            <div className="metric-row">
-              <span className="metric-label">Coverage</span>
-              <div className="metric-bar-container">
-                <div className="metric-bar cyan" style={{ width: '87%' }}></div>
+              <div className="metric-row">
+                <span className="metric-label">Coverage</span>
+                <div className="metric-bar-container">
+                  <div className="metric-bar cyan" style={{ width: '87%' }}></div>
+                </div>
+                <span className="metric-value cyan">87%</span>
               </div>
-              <span className="metric-value cyan">87%</span>
-            </div>
-            <div className="metric-row">
-              <span className="metric-label">Critical bugs</span>
-              <div className="metric-bar-container">
-                <div className="metric-bar red" style={{ width: '30%' }}></div>
+              <div className="metric-row">
+                <span className="metric-label">Critical bugs</span>
+                <div className="metric-bar-container">
+                  <div className="metric-bar red" style={{ width: '30%' }}></div>
+                </div>
+                <span className="metric-value red">30%</span>
               </div>
-              <span className="metric-value red">30%</span>
             </div>
           </div>
         </div>

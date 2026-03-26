@@ -1,18 +1,31 @@
-import { NavLink } from 'react-router-dom';
-import { HiOutlineBell, HiOutlineChevronDown } from 'react-icons/hi';
+import { 
+  HiOutlineViewGrid,
+  HiOutlineBeaker,
+  HiOutlineTerminal,
+  HiOutlineLightBulb,
+  HiOutlineCheckCircle,
+  HiOutlineBell,
+  HiOutlineDatabase,
+  HiOutlineDocumentText,
+  HiOutlineLightningBolt,
+  HiOutlineCog,
+  HiOutlineChevronDown
+} from 'react-icons/hi';
 import './Sidebar.css';
 
+import { NavLink } from 'react-router-dom';
+
 const navItems = [
-  { path: '/', label: 'Dashboard' },
-  { path: '/bug-prediction', label: 'Bug Prediction' },
-  { path: '/rtl-analysis', label: 'RTL Analysis', color: 'cyan' },
-  { path: '/verif-intel', label: 'Verif Intel', color: 'yellow' },
-  { path: '/tapeout-readiness', label: 'Tapeout', color: 'grey' },
-  { path: '/alerts', label: 'Alerts', badge: 7, color: 'grey' },
-  { path: '/data-pipeline', label: 'Data Pipeline', color: 'yellow' },
-  { path: '/reports', label: 'Reports', color: 'yellow' },
-  { path: '/simulator', label: 'Simulator 🔥', color: 'yellow' },
-  { path: '/settings', label: 'Settings', color: 'yellow' },
+  { path: '/', label: 'Dashboard', icon: HiOutlineViewGrid },
+  { path: '/bug-prediction', label: 'Bug Prediction', icon: HiOutlineBeaker },
+  { path: '/rtl-analysis', label: 'RTL Analysis', icon: HiOutlineTerminal },
+  { path: '/verif-intel', label: 'Verif Intel', icon: HiOutlineLightBulb },
+  { path: '/tapeout-readiness', label: 'Tapeout', icon: HiOutlineCheckCircle },
+  { path: '/alerts', label: 'Alerts', icon: HiOutlineBell, badge: 7 },
+  { path: '/data-pipeline', label: 'Data Pipeline', icon: HiOutlineDatabase },
+  { path: '/reports', label: 'Reports', icon: HiOutlineDocumentText },
+  { path: '/simulator', label: 'Simulator', icon: HiOutlineLightningBolt },
+  { path: '/settings', label: 'Settings', icon: HiOutlineCog },
 ];
 
 export default function Navbar() {
@@ -49,9 +62,10 @@ export default function Navbar() {
             <NavLink
               key={item.path}
               to={item.path}
-              className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''} ${item.color || ''}`}
+              className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''}`}
               end={item.path === '/'}
             >
+              <item.icon className="nav-tab-icon" />
               {item.label}
               {item.badge && <span className="nav-tab-badge">{item.badge}</span>}
             </NavLink>

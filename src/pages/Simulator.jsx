@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HiOutlinePlay, HiOutlineLightningBolt } from 'react-icons/hi';
+import { HiOutlinePlay, HiOutlineLightningBolt, HiOutlineFire, HiOutlineTarget, HiOutlineChartBar } from 'react-icons/hi';
 import './Simulator.css';
 
 export default function Simulator() {
@@ -17,7 +17,7 @@ export default function Simulator() {
       {/* Header Banner */}
       {!isSimulated ? (
         <div className="simulation-banner">
-          <span className="banner-icon">🔥</span>
+          <HiOutlineFire className="banner-icon" color="#f59e0b" />
           <div className="banner-content">
             <span className="banner-title">Scenario Simulator — What-If Analysis</span>
             <span className="banner-subtitle">Adjust inputs to see how resource changes affect tapeout readiness</span>
@@ -114,12 +114,13 @@ export default function Simulator() {
         <div className="sim-pane">
           {!isSimulated ? (
             <div className="results-empty">
-              <div className="target-icon">🎯</div>
+              <HiOutlineTarget className="target-icon" />
               <p>Adjust the inputs on the left<br />and click Run Simulation</p>
             </div>
           ) : (
             <div className="results-content">
               <div className="res-grid">
+                {/* ... existing result cards ... */}
                 <div className="res-card">
                   <div className="res-label">TAPEOUT SCORE</div>
                   <div className="res-main">
@@ -152,10 +153,11 @@ export default function Simulator() {
 
               <div className="ai-analysis-box">
                 <div className="ai-header">
-                  <span>📊 AI ANALYSIS</span>
+                  <HiOutlineChartBar />
+                  <span>AI ANALYSIS</span>
                 </div>
                 <p className="ai-text">
-                  Adding <b>{engineers} engineers</b> and <b>{cycles} test cycles</b> with focus on <b>{module}</b> improves tapeout from <span className="res-baseline">67</span> → <span className="impact-score">73 🟡</span> Approaching threshold.
+                  Adding <b>{engineers} engineers</b> and <b>{cycles} test cycles</b> with focus on <b>{module}</b> improves tapeout from <span className="res-baseline">67</span> → <span className="impact-score">73</span> <span className="status-dot-yellow"></span> Approaching threshold.
                 </p>
               </div>
             </div>

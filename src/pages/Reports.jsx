@@ -1,4 +1,12 @@
 import {
+  HiOutlineBugAnt,
+  HiOutlineExclamation,
+  HiOutlineChartBar,
+  HiOutlineCheckCircle,
+  HiOutlineCalendar,
+  HiOutlineCube
+} from 'react-icons/hi2'; // Using hi2 for more comprehensive icons like BugAnt
+import {
   BarChart,
   Bar,
   LineChart,
@@ -30,12 +38,12 @@ const coverageTrendData = [
 ];
 
 const reports = [
-  { id: 'bug', title: 'Bug Report', desc: 'All open + closed bugs with severity breakdown', icon: '🐛', color: 'red' },
-  { id: 'risk', title: 'Risk Report', desc: 'Module risk scores, trends, AI predictions', icon: '⚠️', color: 'orange' },
-  { id: 'cov', title: 'Coverage Report', desc: 'Functional + code coverage by module with gaps', icon: '📊', color: 'cyan' },
-  { id: 'tape', title: 'Tapeout Report', desc: 'Readiness score, checklist, recommended actions', icon: '🎯', color: 'yellow' },
-  { id: 'week', title: 'Weekly Summary', desc: 'Auto-generated weekly executive summary', icon: '📅', color: 'green' },
-  { id: 'full', title: 'Full Export', desc: 'Complete dataset — bugs, coverage, risk, commits (CSV)', icon: '📦', color: 'grey' },
+  { id: 'bug', title: 'Bug Report', desc: 'All open + closed bugs with severity breakdown', icon: <HiOutlineBugAnt />, color: 'red' },
+  { id: 'risk', title: 'Risk Report', desc: 'Module risk scores, trends, AI predictions', icon: <HiOutlineExclamation />, color: 'orange' },
+  { id: 'cov', title: 'Coverage Report', desc: 'Functional + code coverage by module with gaps', icon: <HiOutlineChartBar />, color: 'cyan' },
+  { id: 'tape', title: 'Tapeout Report', desc: 'Readiness score, checklist, recommended actions', icon: <HiOutlineCheckCircle />, color: 'yellow' },
+  { id: 'week', title: 'Weekly Summary', desc: 'Auto-generated weekly executive summary', icon: <HiOutlineCalendar />, color: 'green' },
+  { id: 'full', title: 'Full Export', desc: 'Complete dataset — bugs, coverage, risk, commits (CSV)', icon: <HiOutlineCube />, color: 'grey' },
 ];
 
 export default function Reports() {

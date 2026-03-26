@@ -1,3 +1,5 @@
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { 
   HiOutlineViewGrid,
   HiOutlineBeaker,
@@ -14,6 +16,7 @@ import {
 } from 'react-icons/hi';
 import './Sidebar.css';
 
+const navItems = [
   { path: '/', label: 'Dashboard', icon: HiOutlineViewGrid },
   { path: '/bug-prediction', label: 'Bug Prediction', icon: HiOutlineBeaker },
   { path: '/rtl-analysis', label: 'RTL Analysis', icon: HiOutlineTerminal },

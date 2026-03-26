@@ -4,7 +4,7 @@ import Dashboard from './pages/Dashboard';
 import BugPrediction from './pages/BugPrediction';
 import ModuleRiskAnalysis from './pages/ModuleRiskAnalysis';
 import TapeoutReadiness from './pages/TapeoutReadiness';
-import RootCauseAnalysis from './analysis/RootCauseAnalysis';
+import RootCauseAnalysis from './pages/RootCauseAnalysis';
 import Alerts from './pages/Alerts';
 import Settings from './pages/Settings';
 import RTLAnalysis from './pages/RTLAnalysis';

@@ -6,7 +6,7 @@ import BugPrediction from './pages/BugPrediction';
 import ModuleRiskAnalysis from './pages/ModuleRiskAnalysis';
 import TapeoutReadiness from './pages/TapeoutReadiness';
 import RootCauseAnalysis from './pages/RootCauseAnalysis';
-import Reports from './pages/Reports';
+import Alerts from './pages/Alerts';
 import Settings from './pages/Settings';
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
           <Route path="/module-risk" element={<ModuleRiskAnalysis />} />
           <Route path="/tapeout-readiness" element={<TapeoutReadiness />} />
           <Route path="/root-cause" element={<RootCauseAnalysis />} />
-          <Route path="/reports" element={<Reports />} />
+          <Route path="/alerts" element={<Alerts />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>

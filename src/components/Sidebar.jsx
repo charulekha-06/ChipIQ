@@ -6,7 +6,7 @@ const navItems = [
   { path: '/', label: 'Dashboard' },
   { path: '/bug-prediction', label: 'Bug Prediction' },
   { path: '/tapeout-readiness', label: 'Tapeout Readiness' },
-  { path: '/reports', label: 'Alerts', badge: 7 },
+  { path: '/alerts', label: 'Alerts', badge: 7 },
 ];
 
 export default function Navbar() {

@@ -10,8 +10,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - var(--navbar-height));
-  margin-top: var(--navbar-height);
+  height: calc(100vh - 96px); /* 52px + 44px */
+  margin-top: 96px;
   overflow: hidden;
 }
 

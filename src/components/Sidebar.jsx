@@ -1,39 +1,46 @@
 import { NavLink } from 'react-router-dom';
-import {
-  HiOutlineViewGrid,
-  HiOutlineCloudUpload,
-  HiOutlineExclamation,
-  HiOutlineShieldCheck,
-  HiOutlineDocumentReport,
-  HiOutlineCog,
-  HiOutlineBell,
-  HiOutlineSearch,
-} from 'react-icons/hi';
-import { TbBugOff, TbAnalyze } from 'react-icons/tb';
-import { VscCircuitBoard } from 'react-icons/vsc';
+import { HiOutlineBell, HiOutlineChevronDown } from 'react-icons/hi';
 import './Sidebar.css';
 
 const navItems = [
-  { path: '/', label: 'Dashboard', icon: <HiOutlineViewGrid /> },
-  { path: '/data-upload', label: 'Data Upload', icon: <HiOutlineCloudUpload /> },
-  { path: '/bug-prediction', label: 'Bug Prediction', icon: <TbBugOff /> },
-  { path: '/module-risk', label: 'Module Risk Analysis', icon: <HiOutlineExclamation /> },
-  { path: '/tapeout-readiness', label: 'Tapeout Readiness', icon: <HiOutlineShieldCheck /> },
-  { path: '/root-cause', label: 'Root Cause Analysis', icon: <TbAnalyze /> },
-  { path: '/reports', label: 'Reports', icon: <HiOutlineDocumentReport /> },
+  { path: '/', label: 'Dashboard' },
+  { path: '/bug-prediction', label: 'Bug Prediction' },
+  { path: '/tapeout-readiness', label: 'Tapeout Readiness' },
+  { path: '/reports', label: 'Alerts', badge: 7 },
 ];
 
 export default function Navbar() {
   return (
     <nav className="navbar">
-      <div className="navbar-left">
-        <NavLink to="/" className="navbar-logo">
-          <div className="logo-icon">
-            <VscCircuitBoard />
-          </div>
-          <span className="logo-text">ChipIQ</span>
-        </NavLink>
+      <div className="navbar-top">
+        <div className="navbar-left">
+          <NavLink to="/" className="navbar-logo">
+            <span className="logo-text">ChipIQ</span>
+          </NavLink>
+        </div>
 
+        <div className="navbar-center">
+          <div className="project-selector">
+            <span>Project Alpha v2.1</span>
+            <HiOutlineChevronDown className="selector-arrow" />
+          </div>
+        </div>
+
+        <div className="navbar-right">
+          <div className="live-status">
+            <span className="status-dot"></span>
+            Live
+          </div>
+
+          <button className="nav-action-btn" title="Notifications">
+            <HiOutlineBell size={20} />
+          </button>
+
+          <div className="nav-user-avatar">AK</div>
+        </div>
+      </div>
+
+      <div className="navbar-bottom">
         <div className="nav-tabs">
           {navItems.map((item) => (
             <NavLink
@@ -42,42 +49,10 @@ export default function Navbar() {
               className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''}`}
               end={item.path === '/'}
             >
-              <span className="nav-tab-icon">{item.icon}</span>
               {item.label}
+              {item.badge && <span className="nav-tab-badge">{item.badge}</span>}
             </NavLink>
           ))}
-        </div>
-      </div>
-
-      <div className="navbar-right">
-        <div className="system-status">
-          <span className="status-dot"></span>
-          Online
-        </div>
-
-        <button className="nav-action-btn" title="Search">
-          <HiOutlineSearch />
-        </button>
-
-        <button className="nav-action-btn" title="Notifications">
-          <HiOutlineBell />
-          <span className="nav-notification-dot"></span>
-        </button>
-
-        <NavLink
-          to="/settings"
-          className="nav-action-btn"
-          title="Settings"
-        >
-          <HiOutlineCog />
-        </NavLink>
-
-        <div className="nav-user">
-          <div className="nav-user-avatar">JE</div>
-          <div className="nav-user-info">
-            <span>John Engineer</span>
-            <span>Verification Lead</span>
-          </div>
         </div>
       </div>
     </nav>

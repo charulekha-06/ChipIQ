@@ -224,42 +224,86 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Bottom */}
-      <div className="bottom-grid">
-        <div className="info-card">
-          <h3>Recent Activity</h3>
-          <div className="activity-list">
-            {activities.map((a, i) => (
-              <div key={i} className="activity-item">
-                <div className={`activity-dot ${a.color}`}></div>
-                <div className="activity-text">
-                  <p>{a.text}</p>
-                  <span>{a.time}</span>
+      {/* RTL Module Risk Heatmap */}
+      <div className="section-card heatmap-section">
+        <div className="section-header">
+          <div className="header-left">
+            <h3>RTL Module Risk Heatmap</h3>
+            <span>8 modules · click to inspect</span>
+          </div>
+          <div className="header-right">
+            <div className="filter-dropdown">Risk <HiOutlineChevronDown /></div>
+            <div className="filter-dropdown">Coverage <HiOutlineChevronDown /></div>
+            <div className="filter-dropdown">Bugs <HiOutlineChevronDown /></div>
+          </div>
+        </div>
+
+        <div className="detailed-risk-grid">
+          {riskModulesDetailed.map((mod) => (
+            <div key={mod.name} className={`detailed-risk-card ${mod.color}`}>
+              <div className="card-top">
+                <span className="mod-name">{mod.name}</span>
+                <span className={`risk-badge ${mod.color}`}>{mod.risk}</span>
+              </div>
+              <div className="card-stats">
+                <span>Bugs: {mod.bugs}</span>
+                <span>Cov: {mod.cov}%</span>
+              </div>
+              <div className="card-progress">
+                <div className={`progress-fill ${mod.color}`} style={{ width: `${mod.cov}%` }}></div>
+              </div>
+            </div>
+          ))}
+          <button className="carousel-btn left"><HiOutlineChevronLeft /></button>
+          <button className="carousel-btn right"><HiOutlineChevronRight /></button>
+        </div>
+      </div>
+
+      <div className="bottom-grid detailed">
+        {/* Verification Progress */}
+        <div className="section-card progress-section">
+          <div className="section-header">
+            <div className="header-left">
+              <h3>Verification Progress</h3>
+              <span>Coverage by module</span>
+            </div>
+          </div>
+          <div className="progress-list">
+            {riskModulesDetailed.map((mod) => (
+              <div key={mod.name} className="progress-row">
+                <div className="row-info">
+                  <span className="row-name">{mod.name}</span>
+                  <span className={`row-value ${mod.color}`}>{mod.cov}%</span>
+                </div>
+                <div className="row-bar-bg">
+                  <div className={`row-bar-fill ${mod.color}`} style={{ width: `${mod.cov}%` }}></div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="info-card">
-          <h3>Quick Actions</h3>
-          <div className="actions-grid">
-            <Link to="/data-upload" className="action-btn">
-              <div className="action-btn-icon blue"><HiOutlineCloudUpload /></div>
-              Upload Data
-            </Link>
-            <Link to="/bug-prediction" className="action-btn">
-              <div className="action-btn-icon green"><TbBugOff /></div>
-              Run Prediction
-            </Link>
-            <Link to="/module-risk" className="action-btn">
-              <div className="action-btn-icon orange"><HiOutlineExclamation /></div>
-              Risk Analysis
-            </Link>
-            <Link to="/root-cause" className="action-btn">
-              <div className="action-btn-icon purple"><TbAnalyze /></div>
-              Root Cause
-            </Link>
+        {/* Recent Alerts */}
+        <div className="section-card alerts-section">
+          <div className="section-header">
+            <div className="header-left">
+              <h3>Recent Alerts</h3>
+              <span>Last 24 hours</span>
+            </div>
+          </div>
+          <div className="detailed-alerts-list">
+            {alerts.map((alert, i) => (
+              <div key={i} className="detailed-alert-item">
+                <div className={`alert-dot ${alert.status}`}></div>
+                <div className="alert-content">
+                  <div className="alert-top">
+                    <p>{alert.text}</p>
+                    <span className="alert-time">{alert.time}</span>
+                  </div>
+                  <span className="alert-module">{alert.module}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

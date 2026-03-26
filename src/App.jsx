@@ -25,6 +25,7 @@ export default function App() {
           <Route path="/module-risk" element={<ModuleRiskAnalysis />} />
           <Route path="/rtl-analysis" element={<RTLAnalysis />} />
           <Route path="/verif-intel" element={<VerifIntel />} />
+          <Route path="/data-pipeline" element={<DataPipeline />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/simulator" element={<Simulator />} />
           <Route path="/tapeout-readiness" element={<TapeoutReadiness />} />

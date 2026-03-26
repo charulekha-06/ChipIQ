@@ -14,102 +14,137 @@
   border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
 }
 
-.status-indicator {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.status-active-pulse {
+  width: 10px;
+  height: 10px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.status-text-primary {
+  font-size: 16px;
   font-weight: 700;
   color: #22c55e;
-  font-size: 16px;
 }
 
-.pipeline-metrics {
-  display: flex;
-  gap: 24px;
-  font-size: 14px;
+.status-divider {
   color: var(--text-dim);
+  font-size: 14px;
 }
 
-.pipeline-metrics b {
-  color: var(--text-primary);
+.status-metric {
+  font-size: 14px;
+  color: var(--text-secondary);
 }
 
-.pipeline-metrics .metric-cyan { color: var(--cyan); }
-.pipeline-metrics .metric-green { color: #22c55e; }
+.status-val {
+  font-weight: 700;
+}
 
-/* Flow Architecture */
-.data-flow-section {
+/* Base Panel */
+.pipeline-panel {
   background: var(--bg-card);
-  padding: 32px;
+  padding: 24px;
   border-radius: 12px;
   border: 1px solid var(--border);
 }
 
+.panel-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.panel-title h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.panel-title p {
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+/* Architecture Flow */
 .flow-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 32px;
-  position: relative;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 12px 0;
 }
 
-.flow-step {
-  width: 180px;
+.flow-node {
+  min-width: 160px;
   padding: 20px;
-  border-radius: 12px;
-  border-width: 1px;
-  border-style: solid;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   gap: 8px;
+  border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.02);
-  position: relative;
-  z-index: 2;
 }
 
-.step-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-.step-subtitle { font-size: 11px; color: var(--text-dim); }
+.flow-node.source { border-color: rgba(34, 211, 238, 0.3); background: rgba(34, 211, 238, 0.05); }
+.flow-node.queue { border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); }
+.flow-node.etl { border-color: rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.05); }
+.flow-node.db { border-color: rgba(34, 197, 94, 0.3); background: rgba(34, 197, 94, 0.05); }
+.flow-node.ai { border-color: rgba(34, 211, 238, 0.3); background: rgba(34, 211, 238, 0.05); }
 
-.flow-step.cyan { border-color: var(--cyan); color: var(--cyan); }
-.flow-step.yellow { border-color: #f59e0b; color: #f59e0b; }
-.flow-step.orange { border-color: #f97316; color: #f97316; }
-.flow-step.green { border-color: #22c55e; color: #22c55e; }
+.node-title {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.source .node-title { color: var(--cyan); }
+.queue .node-title { color: #f59e0b; }
+.etl .node-title { color: #f97316; }
+.db .node-title { color: #22c55e; }
+.ai .node-title { color: var(--cyan); }
+
+.node-desc {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.4;
+}
 
 .flow-arrow {
-  color: var(--border);
-  font-size: 20px;
+  color: var(--text-dim);
+  font-size: 16px;
   opacity: 0.5;
 }
 
 /* Data Sources Table */
-.data-sources-section {
-  background: var(--bg-card);
-  padding: 32px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-}
-
-.sources-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-}
-
-.btn-add-source {
-  background: none;
-  border: 1px solid var(--cyan-glow);
+.add-source-btn {
+  background: rgba(34, 211, 238, 0.05);
+  border: 1px solid rgba(34, 211, 238, 0.2);
   color: var(--cyan);
   padding: 8px 16px;
   border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-source-btn:hover {
+  background: rgba(34, 211, 238, 0.1);
 }
 
 .sources-table {
@@ -119,38 +154,63 @@
 
 .sources-table th {
   text-align: left;
-  padding: 12px 16px;
+  padding: 12px 0;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
+  color: var(--text-muted);
   text-transform: uppercase;
-  color: var(--text-dim);
+  letter-spacing: 1px;
   border-bottom: 1px solid var(--border);
 }
 
 .sources-table td {
-  padding: 20px 16px;
-  font-size: 14px;
+  padding: 16px 0;
+  font-size: 13px;
   color: var(--text-primary);
-  border-bottom: 1px solid var(--border);
-  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.source-name { font-weight: 700; }
-.source-type { color: var(--text-dim); }
+.sources-table tr:last-child td {
+  border-bottom: none;
+}
 
-.status-row {
-  display: flex;
+.source-name {
+  font-weight: 600;
+}
+
+.source-type {
+  color: var(--text-secondary);
+}
+
+.source-sync {
+  color: var(--text-dim);
+}
+
+.source-records {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Status variants */
+.status-indicator {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font-size: 12px;
+  font-weight: 600;
 }
 
-.dot { width: 8px; height: 8px; border-radius: 50%; }
-.dot.active { background: #22c55e; box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
-.dot.warning { background: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
-.dot.inactive { background: #64748b; }
+.status-indicator.active { color: #22c55e; }
+.status-indicator.warning { color: #f59e0b; }
+.status-indicator.inactive { color: var(--text-dim); }
 
-.records-val { font-family: monospace; font-size: 15px; color: var(--text-secondary); }
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.active .dot { background: #22c55e; box-shadow: 0 0 6px rgba(34, 197, 94, 0.5); }
+.warning .dot { background: #f59e0b; }
+.inactive .dot { background: #475569; }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

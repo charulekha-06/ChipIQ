@@ -1,5 +1,3 @@
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { 
   HiOutlineViewGrid,
   HiOutlineBeaker,
@@ -11,10 +9,11 @@ import {
   HiOutlineDocumentText,
   HiOutlineLightningBolt,
   HiOutlineCog,
-  HiOutlineChevronDown,
-  HiOutlineLogout
+  HiOutlineChevronDown
 } from 'react-icons/hi';
 import './Sidebar.css';
+
+import { NavLink } from 'react-router-dom';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: HiOutlineViewGrid },
@@ -30,16 +29,6 @@ const navItems = [
 ];
 
 export default function Navbar() {
-  const { user, logout, hasAccess } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
-  const filteredItems = navItems.filter(item => hasAccess(item.path));
-
   return (
     <nav className="navbar">
       <div className="navbar-top">
@@ -63,18 +52,13 @@ export default function Navbar() {
             <HiOutlineBell size={20} />
           </button>
 
-          <button className="nav-action-btn" title="Logout" onClick={handleLogout}>
-            <HiOutlineLogout size={20} />
-          </button>
-
-          <div className="nav-user-avatar">{user?.name}</div>
-          <div className="user-role-badge">{user?.role}</div>
+          <div className="nav-user-avatar">AK</div>
         </div>
       </div>
 
       <div className="navbar-bottom">
         <div className="nav-tabs">
-          {filteredItems.map((item) => (
+          {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}

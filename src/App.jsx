@@ -8,8 +8,8 @@ import TapeoutReadiness from './pages/TapeoutReadiness';
 import RootCauseAnalysis from './pages/RootCauseAnalysis';
 import Alerts from './pages/Alerts';
 import Settings from './pages/Settings';
-
 import RTLAnalysis from './pages/RTLAnalysis';
+import VerifIntel from './pages/VerifIntel';
 
 export default function App() {
   return (
@@ -21,6 +21,7 @@ export default function App() {
           <Route path="/bug-prediction" element={<BugPrediction />} />
           <Route path="/module-risk" element={<ModuleRiskAnalysis />} />
           <Route path="/rtl-analysis" element={<RTLAnalysis />} />
+          <Route path="/verif-intel" element={<VerifIntel />} />
           <Route path="/tapeout-readiness" element={<TapeoutReadiness />} />
           <Route path="/root-cause" element={<RootCauseAnalysis />} />
           <Route path="/alerts" element={<Alerts />} />

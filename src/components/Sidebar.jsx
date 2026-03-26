@@ -11,8 +11,8 @@ const navItems = [
   { path: '/alerts', label: 'Alerts', badge: 7, color: 'grey' },
   { path: '/data-pipeline', label: 'Data Pipeline', color: 'yellow' },
   { path: '/reports', label: 'Reports', color: 'yellow' },
-  { path: '/settings', label: 'Settings', color: 'yellow' },
   { path: '/simulator', label: 'Simulator 🔥', color: 'yellow' },
+  { path: '/settings', label: 'Settings', color: 'yellow' },
 ];
 
 export default function Navbar() {

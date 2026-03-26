@@ -11,6 +11,7 @@ import Settings from './pages/Settings';
 import RTLAnalysis from './pages/RTLAnalysis';
 import VerifIntel from './pages/VerifIntel';
 import Reports from './pages/Reports';
+import Simulator from './pages/Simulator';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/rtl-analysis" element={<RTLAnalysis />} />
           <Route path="/verif-intel" element={<VerifIntel />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/simulator" element={<Simulator />} />
           <Route path="/tapeout-readiness" element={<TapeoutReadiness />} />
           <Route path="/root-cause" element={<RootCauseAnalysis />} />
           <Route path="/alerts" element={<Alerts />} />

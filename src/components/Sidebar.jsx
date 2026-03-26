@@ -20,10 +20,7 @@ export default function Navbar() {
         </div>
 
         <div className="navbar-center">
-          <div className="project-selector">
-            <span>Project Alpha v2.1</span>
-            <HiOutlineChevronDown className="selector-arrow" />
-          </div>
+          {/* Project selector removed */}
         </div>
 
         <div className="navbar-right">

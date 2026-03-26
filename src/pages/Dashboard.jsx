@@ -120,9 +120,9 @@ export default function Dashboard() {
           <ResponsiveContainer width="100%" height={260}>
             <AreaChart data={bugTrendData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
               <defs>
-                <linearGradient id="actualGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.15} />
-                  <stop offset="100%" stopColor="#22d3ee" stopOpacity={0} />
+                <linearGradient id="forecastShade" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#f59e0b" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
@@ -143,7 +143,7 @@ export default function Dashboard() {
                 dataKey="actual"
                 stroke="#22d3ee"
                 strokeWidth={2}
-                fill="url(#actualGrad)"
+                fill="none"
                 name="Actual"
                 connectNulls={false}
                 dot={false}
@@ -154,20 +154,20 @@ export default function Dashboard() {
                 stroke="#f59e0b"
                 strokeWidth={2}
                 strokeDasharray="6 4"
-                fill="none"
+                fill="url(#forecastShade)"
                 name="AI Forecast"
                 connectNulls={false}
-                dot={{ r: 3, fill: '#f59e0b', stroke: '#f59e0b' }}
+                dot={{ r: 4, fill: '#f59e0b', stroke: '#0f172a', strokeWidth: 1 }}
               />
             </AreaChart>
           </ResponsiveContainer>
           <div className="chart-legend">
             <div className="legend-item">
-              <span className="legend-dot solid"></span>
+              <span className="legend-line solid"></span>
               Actual
             </div>
             <div className="legend-item">
-              <span className="legend-dot dashed"></span>
+              <span className="legend-line dashed"></span>
               AI Forecast
             </div>
           </div>
@@ -175,19 +175,12 @@ export default function Dashboard() {
 
         <div className="chart-card tapeout-card">
           <h3>Tapeout Readiness</h3>
-          <div className="tapeout-content">
-            <div className="tapeout-gauge">
+          <div className="tapeout-content-v2">
+            <div className="tapeout-gauge-v2">
               <svg viewBox="0 0 150 150">
-                <defs>
-                  <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#ef4444" />
-                    <stop offset="50%" stopColor="#f59e0b" />
-                    <stop offset="100%" stopColor="#22c55e" />
-                  </linearGradient>
-                </defs>
                 <circle className="gauge-bg" cx="75" cy="75" r="65" />
                 <circle
-                  className="gauge-fill"
+                  className="gauge-fill yellow"
                   cx="75" cy="75" r="65"
                   strokeDasharray={circumference}
                   strokeDashoffset={dashOffset}
@@ -195,31 +188,31 @@ export default function Dashboard() {
               </svg>
               <div className="gauge-center">
                 <div className="gauge-value">{tapeoutScore}</div>
-                <div className="gauge-label">Tapeout Score</div>
+                <div className="gauge-label">TAPEOUT SCORE</div>
               </div>
             </div>
 
-            <div className="tapeout-metrics">
-              <div className="metric-row">
+            <div className="tapeout-metrics-v2">
+              <div className="metric-row-v2">
                 <span className="metric-label">Bug trend</span>
                 <div className="metric-bar-container">
-                  <div className="metric-bar blue" style={{ width: '60%' }}></div>
+                  <div className="metric-bar cyan" style={{ width: '60%' }}></div>
                 </div>
-                <span className="metric-value blue">60%</span>
+                <span className="metric-value">60%</span>
               </div>
-              <div className="metric-row">
+              <div className="metric-row-v2">
                 <span className="metric-label">Coverage</span>
                 <div className="metric-bar-container">
                   <div className="metric-bar cyan" style={{ width: '87%' }}></div>
                 </div>
-                <span className="metric-value cyan">87%</span>
+                <span className="metric-value">87%</span>
               </div>
-              <div className="metric-row">
+              <div className="metric-row-v2">
                 <span className="metric-label">Critical bugs</span>
                 <div className="metric-bar-container">
                   <div className="metric-bar red" style={{ width: '30%' }}></div>
                 </div>
-                <span className="metric-value red">30%</span>
+                <span className="metric-value">30%</span>
               </div>
             </div>
           </div>

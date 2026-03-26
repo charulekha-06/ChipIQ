@@ -153,8 +153,16 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: var(--cyan);
-  box-shadow: 0 0 8px var(--cyan-glow);
+  background: var(--underline-color, var(--cyan));
+  box-shadow: 0 0 8px var(--underline-glow, var(--cyan-glow));
+}
+
+.nav-tab.cyan { color: var(--cyan); --underline-color: var(--cyan); --underline-glow: var(--cyan-glow); }
+.nav-tab.yellow { color: #f59e0b; --underline-color: #f59e0b; --underline-glow: rgba(245, 158, 11, 0.3); }
+.nav-tab.grey { color: var(--text-secondary); --underline-color: var(--text-secondary); --underline-glow: rgba(255, 255, 255, 0.1); }
+
+.nav-tab.active {
+  color: var(--underline-color, var(--cyan)) !important;
 }
 
 .nav-tab-badge {

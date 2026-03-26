@@ -9,6 +9,8 @@ import RootCauseAnalysis from './pages/RootCauseAnalysis';
 import Alerts from './pages/Alerts';
 import Settings from './pages/Settings';
 
+import RTLAnalysis from './pages/RTLAnalysis';
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -18,6 +20,7 @@ export default function App() {
           <Route path="/data-upload" element={<DataUpload />} />
           <Route path="/bug-prediction" element={<BugPrediction />} />
           <Route path="/module-risk" element={<ModuleRiskAnalysis />} />
+          <Route path="/rtl-analysis" element={<RTLAnalysis />} />
           <Route path="/tapeout-readiness" element={<TapeoutReadiness />} />
           <Route path="/root-cause" element={<RootCauseAnalysis />} />
           <Route path="/alerts" element={<Alerts />} />

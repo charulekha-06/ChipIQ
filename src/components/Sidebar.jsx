@@ -5,8 +5,13 @@ import './Sidebar.css';
 const navItems = [
   { path: '/', label: 'Dashboard' },
   { path: '/bug-prediction', label: 'Bug Prediction' },
-  { path: '/tapeout-readiness', label: 'Tapeout Readiness' },
-  { path: '/alerts', label: 'Alerts', badge: 7 },
+  { path: '/rtl-analysis', label: 'RTL Analysis', color: 'cyan' },
+  { path: '/verif-intel', label: 'Verif Intel', color: 'yellow' },
+  { path: '/tapeout-readiness', label: 'Tapeout', color: 'grey' },
+  { path: '/alerts', label: 'Alerts', badge: 7, color: 'grey' },
+  { path: '/data-pipeline', label: 'Data Pipeline', color: 'yellow' },
+  { path: '/reports', label: 'Reports', color: 'yellow' },
+  { path: '/settings', label: 'Settings', color: 'yellow' },
 ];
 
 export default function Navbar() {
@@ -43,7 +48,7 @@ export default function Navbar() {
             <NavLink
               key={item.path}
               to={item.path}
-              className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''}`}
+              className={({ isActive }) => `nav-tab ${isActive ? 'active' : ''} ${item.color || ''}`}
               end={item.path === '/'}
             >
               {item.label}

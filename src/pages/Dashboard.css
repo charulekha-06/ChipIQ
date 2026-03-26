@@ -25,10 +25,7 @@
   transition: all 0.25s ease;
 }
 
-.stat-card.blue { border-left: 3px solid #3b82f6; }
-.stat-card.red { border-left: 3px solid #ef4444; }
-.stat-card.yellow { border-left: 3px solid #f59e0b; }
-.stat-card.green { border-left: 3px solid #22c55e; }
+
 
 .stat-card-label {
   font-size: 10px;
@@ -135,10 +132,7 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
-.detailed-risk-card.red { border-left: 2px solid #ef4444; }
-.detailed-risk-card.orange { border-left: 2px solid #f59e0b; }
-.detailed-risk-card.yellow { border-left: 2px solid #eab308; }
-.detailed-risk-card.green { border-left: 2px solid #22c55e; }
+
 
 .card-top {
   display: flex;

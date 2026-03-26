@@ -1,0 +1,255 @@
+import { Link } from 'react-router-dom';
+import {
+  HiOutlineCloudUpload,
+  HiOutlineExclamation,
+  HiOutlineTrendingUp,
+} from 'react-icons/hi';
+import { TbBugOff, TbAnalyze } from 'react-icons/tb';
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+} from 'recharts';
+import './Dashboard.css';
+
+const bugTrendData = [
+  { date: 'Feb 25', actual: 8, forecast: null },
+  { date: 'Mar 2', actual: 12, forecast: null },
+  { date: 'Mar 5', actual: 10, forecast: null },
+  { date: 'Mar 7', actual: 14, forecast: null },
+  { date: 'Mar 10', actual: 11, forecast: null },
+  { date: 'Mar 12', actual: 18, forecast: null },
+  { date: 'Mar 15', actual: 15, forecast: null },
+  { date: 'Mar 17', actual: 22, forecast: null },
+  { date: 'Mar 19', actual: 19, forecast: null },
+  { date: 'Mar 22', actual: 25, forecast: 25 },
+  { date: 'Mar 24', actual: null, forecast: 27 },
+  { date: 'Mar 26', actual: null, forecast: 24 },
+];
+
+const activities = [
+  { text: 'DMA controller flagged as high risk — score 92', time: '12 min ago', color: 'red' },
+  { text: 'Bug #1247 resolved in Cache subsystem', time: '28 min ago', color: 'green' },
+  { text: 'New regression data uploaded for PCIe v3.1', time: '1 hr ago', color: 'cyan' },
+  { text: 'Tapeout readiness score updated to 67/100', time: '2 hrs ago', color: 'orange' },
+  { text: 'Root cause identified for timing violation in ALU', time: '3 hrs ago', color: 'green' },
+];
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div style={{
+        background: '#1e293b',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: '8px',
+        padding: '10px 14px',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+      }}>
+        <p style={{ color: '#64748b', fontSize: '11px', marginBottom: '4px' }}>{label}</p>
+        {payload.map((p, i) => (
+          <p key={i} style={{ color: p.color, fontSize: '12px', fontWeight: 600 }}>
+            {p.name}: {p.value}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
+
+export default function Dashboard() {
+  const circumference = 2 * Math.PI * 65;
+  const tapeoutScore = 67;
+  const dashOffset = circumference - (tapeoutScore / 100) * circumference;
+
+  return (
+    <div className="dashboard">
+      {/* Stat Cards */}
+      <div className="stat-cards">
+        <div className="stat-card blue">
+          <div className="stat-card-label">Total Bugs Found</div>
+          <div className="stat-card-value">312</div>
+          <div className="stat-card-sub up">
+            <HiOutlineTrendingUp /> +18 this week
+          </div>
+        </div>
+
+        <div className="stat-card red">
+          <div className="stat-card-label">Open Critical Bugs</div>
+          <div className="stat-card-value">7</div>
+          <div className="stat-card-sub up">
+            <HiOutlineTrendingUp /> +2 since Monday
+          </div>
+        </div>
+
+        <div className="stat-card yellow">
+          <div className="stat-card-label">Tapeout Readiness</div>
+          <div className="stat-card-value">67<span style={{ fontSize: '18px', fontWeight: 400, color: 'var(--text-muted)' }}>/100</span></div>
+          <div className="stat-card-sub warn">
+            <HiOutlineExclamation /> Conditional
+          </div>
+        </div>
+
+        <div className="stat-card green">
+          <div className="stat-card-label">Est. Completion</div>
+          <div className="stat-card-value" style={{ fontSize: '22px', letterSpacing: '-0.5px' }}>Apr 14, 2026</div>
+          <div className="stat-card-sub neutral">
+            19 days remaining
+          </div>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="charts-section">
+        <div className="chart-card">
+          <div className="chart-card-header">
+            <h3>Bug Discovery Trend + Forecast</h3>
+            <p>Last 30 days · AI forecast next 7 days</p>
+          </div>
+          <ResponsiveContainer width="100%" height={260}>
+            <AreaChart data={bugTrendData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
+              <defs>
+                <linearGradient id="actualGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.15} />
+                  <stop offset="100%" stopColor="#22d3ee" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 11, fill: '#475569' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 11, fill: '#475569' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="actual"
+                stroke="#22d3ee"
+                strokeWidth={2}
+                fill="url(#actualGrad)"
+                name="Actual"
+                connectNulls={false}
+                dot={false}
+              />
+              <Area
+                type="monotone"
+                dataKey="forecast"
+                stroke="#f59e0b"
+                strokeWidth={2}
+                strokeDasharray="6 4"
+                fill="none"
+                name="AI Forecast"
+                connectNulls={false}
+                dot={{ r: 3, fill: '#f59e0b', stroke: '#f59e0b' }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+          <div className="chart-legend">
+            <div className="legend-item">
+              <span className="legend-dot solid"></span>
+              Actual
+            </div>
+            <div className="legend-item">
+              <span className="legend-dot dashed"></span>
+              AI Forecast
+            </div>
+          </div>
+        </div>
+
+        <div className="chart-card tapeout-card">
+          <h3>Tapeout Readiness</h3>
+          <div className="tapeout-gauge">
+            <svg viewBox="0 0 150 150">
+              <defs>
+                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#ef4444" />
+                  <stop offset="50%" stopColor="#f59e0b" />
+                  <stop offset="100%" stopColor="#22c55e" />
+                </linearGradient>
+              </defs>
+              <circle className="gauge-bg" cx="75" cy="75" r="65" />
+              <circle
+                className="gauge-fill"
+                cx="75" cy="75" r="65"
+                strokeDasharray={circumference}
+                strokeDashoffset={dashOffset}
+              />
+            </svg>
+            <div className="gauge-center">
+              <div className="gauge-value">{tapeoutScore}</div>
+              <div className="gauge-label">Tapeout Score</div>
+            </div>
+          </div>
+
+          <div className="tapeout-metrics">
+            <div className="metric-row">
+              <span className="metric-label">Bug trend</span>
+              <div className="metric-bar-container">
+                <div className="metric-bar blue" style={{ width: '60%' }}></div>
+              </div>
+              <span className="metric-value blue">60%</span>
+            </div>
+            <div className="metric-row">
+              <span className="metric-label">Coverage</span>
+              <div className="metric-bar-container">
+                <div className="metric-bar cyan" style={{ width: '87%' }}></div>
+              </div>
+              <span className="metric-value cyan">87%</span>
+            </div>
+            <div className="metric-row">
+              <span className="metric-label">Critical bugs</span>
+              <div className="metric-bar-container">
+                <div className="metric-bar red" style={{ width: '30%' }}></div>
+              </div>
+              <span className="metric-value red">30%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom */}
+      <div className="bottom-grid">
+        <div className="info-card">
+          <h3>Recent Activity</h3>
+          <div className="activity-list">
+            {activities.map((a, i) => (
+              <div key={i} className="activity-item">
+                <div className={`activity-dot ${a.color}`}></div>
+                <div className="activity-text">
+                  <p>{a.text}</p>
+                  <span>{a.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="info-card">
+          <h3>Quick Actions</h3>
+          <div className="actions-grid">
+            <Link to="/data-upload" className="action-btn">
+              <div className="action-btn-icon blue"><HiOutlineCloudUpload /></div>
+              Upload Data
+            </Link>
+            <Link to="/bug-prediction" className="action-btn">
+              <div className="action-btn-icon green"><TbBugOff /></div>
+              Run Prediction
+            </Link>
+            <Link to="/module-risk" className="action-btn">
+              <div className="action-btn-icon orange"><HiOutlineExclamation /></div>
+              Risk Analysis
+            </Link>
+            <Link to="/root-cause" className="action-btn">
+              <div className="action-btn-icon purple"><TbAnalyze /></div>
+              Root Cause
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

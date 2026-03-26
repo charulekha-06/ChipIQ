@@ -1,6 +1,6 @@
 import {
   HiOutlineBugAnt,
-  HiOutlineExclamation,
+  HiOutlineExclamationTriangle,
   HiOutlineChartBar,
   HiOutlineCheckCircle,
   HiOutlineCalendar,
@@ -39,7 +39,7 @@ const coverageTrendData = [
 
 const reports = [
   { id: 'bug', title: 'Bug Report', desc: 'All open + closed bugs with severity breakdown', icon: <HiOutlineBugAnt />, color: 'red' },
-  { id: 'risk', title: 'Risk Report', desc: 'Module risk scores, trends, AI predictions', icon: <HiOutlineExclamation />, color: 'orange' },
+  { id: 'risk', title: 'Risk Report', desc: 'Module risk scores, trends, AI predictions', icon: <HiOutlineExclamationTriangle />, color: 'orange' },
   { id: 'cov', title: 'Coverage Report', desc: 'Functional + code coverage by module with gaps', icon: <HiOutlineChartBar />, color: 'cyan' },
   { id: 'tape', title: 'Tapeout Report', desc: 'Readiness score, checklist, recommended actions', icon: <HiOutlineCheckCircle />, color: 'yellow' },
   { id: 'week', title: 'Weekly Summary', desc: 'Auto-generated weekly executive summary', icon: <HiOutlineCalendar />, color: 'green' },

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HiOutlinePlay, HiOutlineLightningBolt, HiOutlineFire, HiOutlineTarget, HiOutlineChartBar } from 'react-icons/hi';
+import { HiOutlinePlay, HiOutlineLightningBolt, HiOutlineFire, HiOutlineAdjustments, HiOutlineChartBar } from 'react-icons/hi';
 import './Simulator.css';
 
 export default function Simulator() {
@@ -114,7 +114,7 @@ export default function Simulator() {
         <div className="sim-pane">
           {!isSimulated ? (
             <div className="results-empty">
-              <HiOutlineTarget className="target-icon" />
+              <HiOutlineAdjustments className="target-icon" />
               <p>Adjust the inputs on the left<br />and click Run Simulation</p>
             </div>
           ) : (

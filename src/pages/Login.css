@@ -266,3 +266,243 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* ─── Mode Switcher ─────────────────────────────────────────────────────── */
+.login-mode-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #000000;
+  background: #FFFFFF;
+  color: #000000;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-tab.active {
+  background: #000000;
+  color: #FFFFFF;
+  border-color: #000000;
+}
+
+.mode-tab:not(.active):hover {
+  background: rgba(0,0,0,0.06);
+}
+
+/* ─── Face Login ────────────────────────────────────────────────────────── */
+.face-login-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.face-camera-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.face-frame {
+  position: relative;
+  width: 300px;
+  height: 240px;
+  border: 2px solid #000;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  transition: border-color 0.3s ease;
+}
+
+.face-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* mirror */
+}
+
+/* Corner brackets */
+.face-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: inherit;
+  border-style: solid;
+  z-index: 5;
+}
+.face-corner.tl { top: 6px; left: 6px;  border-width: 2px 0 0 2px; border-radius: 3px 0 0 0; }
+.face-corner.tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; border-radius: 0 3px 0 0; }
+.face-corner.bl { bottom: 6px; left: 6px;  border-width: 0 0 2px 2px; border-radius: 0 0 0 3px; }
+.face-corner.br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; border-radius: 0 0 3px 0; }
+
+/* Scanning animation */
+.scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #D32F2F, transparent);
+  box-shadow: 0 0 8px #D32F2F;
+  animation: scanMove 1.5s ease-in-out infinite;
+  z-index: 4;
+}
+
+@keyframes scanMove {
+  0%   { top: 10%; }
+  50%  { top: 85%; }
+  100% { top: 10%; }
+}
+
+/* Countdown */
+.countdown-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.85);
+  z-index: 6;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+  animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(1.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Success overlay */
+.face-success-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 197, 94, 0.4);
+  font-size: 72px;
+  color: #22c55e;
+  z-index: 7;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+/* Status message */
+.face-status-msg {
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  margin: 0;
+  transition: color 0.3s;
+}
+.face-status-msg.idle     { color: #64748b; }
+.face-status-msg.scanning { color: #D32F2F; }
+.face-status-msg.success  { color: #22c55e; }
+.face-status-msg.error    { color: #ef4444; }
+
+/* Buttons */
+.face-btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.face-btn {
+  padding: 10px 24px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.face-btn.scan {
+  background: #D32F2F;
+  color: #fff;
+}
+.face-btn.scan:hover { background: #000; }
+
+.face-btn.enroll {
+  background: #000;
+  color: #fff;
+  width: 100%;
+  justify-content: center;
+}
+.face-btn.enroll:hover { background: #D32F2F; }
+
+.face-btn.scanning {
+  background: #555;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+/* Enroll section */
+.enroll-section { width: 100%; }
+
+.enroll-toggle {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+  text-decoration: underline;
+  width: 100%;
+  text-align: center;
+}
+.enroll-toggle:hover { color: #000; }
+
+.enroll-panel {
+  margin-top: 12px;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.2s ease;
+}
+
+.enroll-note {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+
+.enroll-status {
+  font-size: 12px;
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+.enroll-status.ok  { background: rgba(34,197,94,0.1); color: #16a34a; }
+.enroll-status.err { background: rgba(239,68,68,0.1);  color: #dc2626; }
+
+.back-to-password {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px;
+}
+.back-to-password:hover { color: #D32F2F; }
+

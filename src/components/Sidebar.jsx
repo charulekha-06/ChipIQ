@@ -35,9 +35,9 @@ const navItems = [
 ];
 
 const ROLES = {
-  engineer: { allowedTabs: ['/', '/bug-prediction', '/rtl-analysis', '/verif-intel', '/alerts', '/simulator', '/ai-generator', '/root-cause', '/data-upload'] },
-  lead: { allowedTabs: ['/', '/bug-prediction', '/rtl-analysis', '/verif-intel', '/tapeout-readiness', '/alerts', '/reports', '/simulator', '/ai-generator', '/root-cause', '/data-upload'] },
-  manager: { allowedTabs: ['/', '/tapeout-readiness', '/alerts', '/data-pipeline', '/reports'] },
+  engineer: { allowedTabs: ['/', '/bug-prediction', '/simulator', '/rtl-analysis', '/data-upload', '/alerts', '/ai-generator', '/root-cause', '/data-pipeline', '/reports'] },
+  lead: { allowedTabs: ['/', '/bug-prediction', '/rtl-analysis', '/simulator', '/data-upload', '/alerts', '/ai-generator', '/root-cause', '/reports', '/data-pipeline', '/tapeout-readiness'] },
+  manager: { allowedTabs: ['/', '/bug-prediction', '/verif-intel', '/tapeout-readiness', '/alerts', '/reports', '/root-cause', '/rtl-analysis', '/data-pipeline'] },
   admin: { allowedTabs: ['/', '/bug-prediction', '/rtl-analysis', '/verif-intel', '/tapeout-readiness', '/alerts', '/data-pipeline', '/reports', '/simulator', '/settings', '/ai-generator', '/root-cause', '/data-upload'] }
 };
 
@@ -65,10 +65,7 @@ export default function Navbar({ user, onLogout }) {
         </div>
 
         <div className="navbar-right">
-          <div className="live-status">
-            <span className="status-dot"></span>
-            Live
-          </div>
+
 
           <button className="nav-action-btn" title="Notifications">
             <HiOutlineBell size={20} />
@@ -94,11 +91,7 @@ export default function Navbar({ user, onLogout }) {
               {item.badge && <span className="nav-tab-badge">{item.badge}</span>}
             </NavLink>
           ))}
-          {restrictedCount > 0 && (
-            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', fontSize: '13px', color: '#000000', paddingRight: '20px' }}>
-              🔒 {restrictedCount} restricted
-            </div>
-          )}
+
         </div>
       </div>
     </nav>

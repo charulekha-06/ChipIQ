@@ -122,6 +122,59 @@ def read_integrated_json(key: str, fallback):
         raise HTTPException(status_code=500, detail=f"Invalid JSON in {file_name}: {exc}")
 
 
+def _extract_numeric_series_from_rows(rows):
+    """Extract month labels and bug-count values from heterogeneous row payloads."""
+    labels = []
+    values = []
+
+    for row in rows or []:
+        if not isinstance(row, dict):
+            continue
+
+        month = str(
+            row.get("month")
+            or row.get("date")
+            or row.get("period")
+            or row.get("bucket")
+            or ""
+        ).strip()
+        if not month:
+            continue
+
+        # Normalize to YYYY-MM when full dates/timestamps are present.
+        if len(month) >= 10 and month[4] == "-" and month[7] == "-":
+            month = month[:7]
+
+        bug_value = (
+            row.get("bugs")
+            if row.get("bugs") is not None
+            else row.get("bug_count")
+            if row.get("bug_count") is not None
+            else row.get("count")
+            if row.get("count") is not None
+            else row.get("total")
+        )
+
+        try:
+            bug_value = float(bug_value)
+        except Exception:
+            continue
+
+        labels.append(month)
+        values.append(bug_value)
+
+    if len(values) < 2:
+        return [], np.array([], dtype=float)
+
+    dedup = {}
+    for month, value in zip(labels, values):
+        dedup[month] = value
+
+    ordered_months = sorted(dedup.keys())
+    ordered_values = np.array([float(dedup[m]) for m in ordered_months], dtype=float)
+    return ordered_months, ordered_values
+
+
 def _extract_log_lines_from_dataframe(df):
     """Normalize a dataframe into root-cause log lines."""
     if df is None or df.empty:
@@ -166,32 +219,70 @@ def _extract_log_lines_from_dataframe(df):
 
 
 def _load_bug_series_from_trend():
-    """Load monthly bug counts as (labels, values) from uploaded or default data."""
-    try:
-        # Try uploaded data first
-        labels, values = data_store.extract_numeric_series('bug_trend_monthly')
+    """Load monthly bug counts with Timescale/ETL preference and safe fallbacks."""
+    preferred = str(os.getenv("FORECAST_SOURCE", "auto")).strip().lower() or "auto"
+
+    def _load_from_timescale():
+        if not timescale_store.status().get("enabled"):
+            return None
+
+        for source_name in ("curated_bug_trend_monthly", "bug_trend_monthly"):
+            result = timescale_store.fetch_recent(source_name, limit=500)
+            if not result.get("success"):
+                continue
+            labels, values = _extract_numeric_series_from_rows(result.get("rows", []))
+            if len(values) >= 2:
+                return labels, values
+        return None
+
+    def _load_from_etl():
+        etl_df = etl_pipeline.get_table("curated_bug_trend_monthly")
+        if etl_df is None or etl_df.empty:
+            return None
+        labels, values = _extract_numeric_series_from_rows(etl_df.to_dict(orient="records"))
         if len(values) >= 2:
             return labels, values
-    except:
-        pass
-    
-    # Fallback to integrated files
-    rows = read_integrated_json("bug_trend_monthly", [])
-    if not isinstance(rows, list) or len(rows) < 2:
-        raise HTTPException(status_code=400, detail="Insufficient bug trend history for forecasting")
+        return None
 
-    labels = []
-    values = []
-    for row in rows:
-        month = str(row.get("month", "")).strip()
-        if not month:
-            continue
-        labels.append(month)
-        values.append(float(row.get("bugs", 0)))
+    def _load_from_uploaded():
+        for table_name in ("bug_trend_monthly", "curated_bug_trend_monthly"):
+            try:
+                labels, values = data_store.extract_numeric_series(table_name)
+                if len(values) >= 2:
+                    return labels, values
+            except Exception:
+                continue
+        return None
 
-    if len(values) < 2:
-        raise HTTPException(status_code=400, detail="Insufficient valid monthly data points for forecasting")
-    return labels, np.array(values, dtype=float)
+    def _load_from_integrated():
+        rows = read_integrated_json("bug_trend_monthly", [])
+        if not isinstance(rows, list):
+            return None
+        labels, values = _extract_numeric_series_from_rows(rows)
+        if len(values) >= 2:
+            return labels, values
+        return None
+
+    loaders = {
+        "timescale": _load_from_timescale,
+        "etl": _load_from_etl,
+        "uploaded": _load_from_uploaded,
+        "integrated": _load_from_integrated,
+    }
+
+    if preferred in loaders:
+        loaded = loaders[preferred]()
+        if loaded is not None:
+            return loaded
+        raise HTTPException(status_code=400, detail=f"Requested forecast source unavailable: {preferred}")
+
+    # auto: prefer curated sources first, then existing legacy paths.
+    for source_name in ("timescale", "etl", "uploaded", "integrated"):
+        loaded = loaders[source_name]()
+        if loaded is not None:
+            return loaded
+
+    raise HTTPException(status_code=400, detail="Insufficient bug trend history for forecasting")
 
 
 def _next_month_labels(last_label: str, steps: int):

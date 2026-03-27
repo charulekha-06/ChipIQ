@@ -323,8 +323,27 @@ class LogAnalyzerConnector(DataConnector):
             return {'success': False, 'message': 'File not connected'}
         
         try:
-            with open(str(self.file_path), 'r', errors='ignore') as f:
-                lines = f.readlines()
+            with open(str(self.file_path), 'rb') as f:
+                raw = f.read()
+
+            # Decode robustly because many simulator logs are UTF-16 with BOM.
+            lines = None
+            if raw.startswith(b'\xff\xfe') or raw.startswith(b'\xfe\xff'):
+                try:
+                    lines = raw.decode('utf-16').splitlines()
+                except Exception:
+                    lines = None
+
+            if lines is None:
+                for enc in ('utf-8', 'utf-16', 'latin-1'):
+                    try:
+                        lines = raw.decode(enc).splitlines()
+                        break
+                    except Exception:
+                        continue
+
+            if lines is None:
+                return {'success': False, 'message': 'Could not decode log file encoding'}
             
             events = []
             for i, line in enumerate(lines[-1000:], start=max(0, len(lines)-1000)):  # Last 1000 lines

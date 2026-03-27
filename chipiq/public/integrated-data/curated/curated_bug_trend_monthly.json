@@ -1,0 +1,1 @@
+[{"month":"2022-10","bugs":1,"etl_processed_at":"2026-03-27T18:50:42.045582+00:00","etl_source_table":"bug_trend_monthly"},{"month":"2022-12","bugs":2,"etl_processed_at":"2026-03-27T18:50:42.045582+00:00","etl_source_table":"bug_trend_monthly"},{"month":"2023-01","bugs":3,"etl_processed_at":"2026-03-27T18:50:42.045582+00:00","etl_source_table":"bug_trend_monthly"}]

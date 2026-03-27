@@ -9,6 +9,7 @@ ChipIQ backend
 
 import base64
 import json
+import os
 from pathlib import Path
 from io import BytesIO
 
@@ -20,6 +21,9 @@ from pydantic import BaseModel
 
 from datastore import DynamicDataStore, SchemaDetector
 from connectors import ConnectorFactory
+from event_bus import event_bus
+from spark_etl import SparkEtlPipeline
+from timescale_store import timescale_store
 
 # ─── Config ────────────────────────────────────────────────────────────────
 FACE_DATA_DIR = Path(__file__).parent / "face_data"
@@ -27,6 +31,26 @@ FACE_DATA_DIR.mkdir(exist_ok=True)
 
 APP_ROOT = Path(__file__).resolve().parent.parent
 INTEGRATED_DATA_DIR = APP_ROOT / "public" / "integrated-data"
+
+
+def _load_simple_env_file(path: Path):
+    """Load KEY=VALUE pairs from a local env file if present."""
+    if not path.exists():
+        return
+    for raw_line in path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key:
+            os.environ.setdefault(key, value)
+
+
+# Allow local env-based Jira config without requiring shell-level exports.
+_load_simple_env_file(APP_ROOT / ".env.local")
+_load_simple_env_file(Path(__file__).parent / ".env")
 
 app = FastAPI(title="ChipIQ Face Auth API", version="1.0.0")
 
@@ -57,6 +81,7 @@ SUPPORTED_MODELS = {"ARIMA", "LSTM", "PROPHET"}
 
 # ─── Dynamic Data Store ────────────────────────────────────────────────────
 data_store = DynamicDataStore(INTEGRATED_DATA_DIR)
+etl_pipeline = SparkEtlPipeline(INTEGRATED_DATA_DIR)
 
 # ─── Connector state ────────────────────────────────────────────────────────
 active_connector = None
@@ -95,6 +120,49 @@ def read_integrated_json(key: str, fallback):
         return json.loads(file_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         raise HTTPException(status_code=500, detail=f"Invalid JSON in {file_name}: {exc}")
+
+
+def _extract_log_lines_from_dataframe(df):
+    """Normalize a dataframe into root-cause log lines."""
+    if df is None or df.empty:
+        return []
+
+    records = df.to_dict(orient="records")
+    lines = []
+
+    for idx, row in enumerate(records):
+        text = None
+        for key in ("message", "text", "log", "line"):
+            if key in row and row[key] is not None and str(row[key]).strip():
+                text = str(row[key]).strip()
+                break
+
+        if not text:
+            for value in row.values():
+                if value is not None and str(value).strip():
+                    text = str(value).strip()
+                    break
+
+        if not text:
+            continue
+
+        line_no = row.get("line_number")
+        try:
+            line_no = int(line_no)
+        except Exception:
+            line_no = idx + 1
+
+        severity = str(row.get("severity", "")).lower().strip()
+        if severity not in {"error", "warning", "normal", "info"}:
+            severity = "normal"
+
+        lines.append({
+            "line": line_no,
+            "text": text,
+            "severity": severity,
+        })
+
+    return lines
 
 
 def _load_bug_series_from_trend():
@@ -294,6 +362,27 @@ class ConnectorConfigRequest(BaseModel):
     connector_type: str
     config: dict
 
+
+class JiraTicketRequest(BaseModel):
+    summary: str
+    description: str
+    issue_type: str = "Bug"
+    priority: str | None = None
+    labels: list[str] | None = None
+    project_key: str | None = None
+    base_url: str | None = None
+    username: str | None = None
+    api_token: str | None = None
+
+
+class EtlRunRequest(BaseModel):
+    selected_tables: list[str] | None = None
+    persist: bool = True
+
+class TimescaleSyncRequest(BaseModel):
+    selected_tables: list[str] | None = None
+    source: str = "etl"  # etl | uploaded
+
 # ─── Routes ────────────────────────────────────────────────────────────────
 
 @app.get("/")
@@ -341,6 +430,20 @@ async def upload_data_file(file: UploadFile = File(...)):
     try:
         contents = await file.read()
         result = data_store.upload_file(file.filename, contents)
+
+        if result.get("success"):
+            event_bus.publish(
+                topic=os.getenv("KAFKA_TOPIC_INGESTION", "chipiq.ingestion.raw"),
+                key="file_upload",
+                payload={
+                    "eventType": "file_upload",
+                    "filename": file.filename,
+                    "tableName": result.get("table_name"),
+                    "rows": result.get("file_info", {}).get("rows"),
+                    "columns": result.get("file_info", {}).get("columns"),
+                },
+            )
+
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Upload failed: {str(e)}")
@@ -350,6 +453,201 @@ async def upload_data_file(file: UploadFile = File(...)):
 def get_upload_status():
     """Get information about uploaded data."""
     return data_store.get_status()
+
+
+@app.get("/api/etl/status")
+def get_etl_status():
+    """Return ETL pipeline capability/status."""
+    return etl_pipeline.status()
+
+
+@app.post("/api/etl/run")
+def run_etl(request: EtlRunRequest):
+    """Run ETL against currently available source tables."""
+    source_tables = {}
+
+    # Uploaded/connector-ingested tables first.
+    for table_name, df in data_store.uploaded_data.items():
+        if df is not None and not df.empty:
+            source_tables[table_name] = df.copy()
+
+    # Include default integrated tables if not already present.
+    for table_name in DATASET_FILES.keys():
+        if table_name in source_tables:
+            continue
+        df = data_store.get_data_table(table_name)
+        if df is not None and not df.empty:
+            source_tables[table_name] = df
+
+    result = etl_pipeline.run(
+        source_tables=source_tables,
+        selected_tables=request.selected_tables,
+        persist=request.persist,
+    )
+
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("message", "ETL failed"))
+
+    # Expose curated tables through existing in-memory data API surface.
+    for curated_name in result.get("curatedTables", []):
+        df = etl_pipeline.get_table(curated_name)
+        if df is None:
+            continue
+        data_store.uploaded_data[curated_name] = df
+        data_store.uploaded_files[curated_name] = {
+            "filename": f"{curated_name}.json",
+            "rows": len(df),
+            "columns": len(df.columns),
+            "timestamp": __import__('datetime').datetime.now().isoformat(),
+            "source": "spark_etl",
+        }
+
+    event_bus.publish(
+        topic=os.getenv("KAFKA_TOPIC_ETL", "chipiq.etl.events"),
+        key="etl_run",
+        payload={
+            "eventType": "etl_run_completed",
+            "tablesProcessed": result.get("tablesProcessed", 0),
+            "curatedTables": result.get("curatedTables", []),
+            "sparkUsed": result.get("sparkUsed", False),
+        },
+    )
+
+    return result
+
+
+@app.get("/api/etl/table/{table_name}")
+def get_etl_table(table_name: str, limit: int = 200):
+    """Preview a curated ETL table."""
+    df = etl_pipeline.get_table(table_name)
+    if df is None:
+        raise HTTPException(status_code=404, detail=f"Curated table not found: {table_name}")
+    if limit < 1:
+        limit = 1
+    if limit > 2000:
+        limit = 2000
+    preview = df.head(limit).to_dict(orient="records")
+    return {
+        "table": table_name,
+        "rows": len(df),
+        "columns": list(df.columns),
+        "preview": preview,
+    }
+
+@app.get("/api/timescale/status")
+def get_timescale_status():
+    """Return TimescaleDB integration status."""
+    return timescale_store.status()
+
+@app.post("/api/timescale/sync")
+def sync_timescale(request: TimescaleSyncRequest):
+    """Sync ETL or uploaded tables into TimescaleDB JSONB events table."""
+    source = (request.source or "etl").strip().lower()
+
+    if source not in {"etl", "uploaded"}:
+        raise HTTPException(status_code=400, detail="source must be one of: etl, uploaded")
+
+    tables = {}
+    if source == "etl":
+        for table_name, df in etl_pipeline.curated_tables.items():
+            tables[table_name] = df
+    else:
+        for table_name, df in data_store.uploaded_data.items():
+            tables[table_name] = df
+
+    if request.selected_tables:
+        allowed = set(request.selected_tables)
+        tables = {k: v for k, v in tables.items() if k in allowed}
+
+    if not tables:
+        raise HTTPException(status_code=400, detail="No tables available to sync")
+
+    synced = []
+    failures = []
+    for table_name, df in tables.items():
+        rows = df.to_dict(orient="records") if df is not None else []
+        result = timescale_store.sync_rows(table_name, rows)
+        if result.get("success"):
+            synced.append({"table": table_name, "rows": result.get("rows", 0)})
+        else:
+            failures.append({"table": table_name, "error": result.get("error") or result.get("reason")})
+
+    event_bus.publish(
+        topic=os.getenv("KAFKA_TOPIC_TIMESCALE", "chipiq.timescale.events"),
+        key="timescale_sync",
+        payload={
+            "eventType": "timescale_sync_completed",
+            "source": source,
+            "syncedTables": synced,
+            "failedTables": failures,
+        },
+    )
+
+    return {
+        "success": len(synced) > 0,
+        "source": source,
+        "synced": synced,
+        "failed": failures,
+        "timescale": timescale_store.status(),
+    }
+
+
+@app.get("/api/timescale/table/{table_name}")
+def get_timescale_table(table_name: str, limit: int = 200):
+    """Read recent rows for a source table from TimescaleDB."""
+    result = timescale_store.fetch_recent(table_name, limit=limit)
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("error") or result.get("reason") or "Timescale read failed")
+    return result
+
+
+    # Optional auto-sync curated tables into TimescaleDB.
+    if str(os.getenv("TIMESCALE_AUTO_SYNC", "false")).strip().lower() in {"1", "true", "yes", "on"}:
+        for curated_name in result.get("curatedTables", []):
+            df = etl_pipeline.get_table(curated_name)
+            if df is None:
+                continue
+            timescale_store.sync_rows(curated_name, df.to_dict(orient="records"))
+
+@app.get("/api/rca/latest-log")
+def get_latest_log_for_rca():
+    """Return the latest available centralized log lines for root cause analysis."""
+    # Priority 1: connector-ingested log table
+    table_candidates = ["simulation_logs"]
+
+    # Priority 2: any uploaded table that looks like a log source
+    for table_name in data_store.uploaded_data.keys():
+        t = str(table_name).lower()
+        if "log" in t and table_name not in table_candidates:
+            table_candidates.append(table_name)
+
+    best_table = None
+    best_ts = ""
+    for name in table_candidates:
+        info = data_store.uploaded_files.get(name, {})
+        ts = str(info.get("timestamp", ""))
+        if best_table is None:
+            best_table = name
+            best_ts = ts
+        elif ts and ts > best_ts:
+            best_table = name
+            best_ts = ts
+
+    if best_table:
+        df = data_store.get_data_table(best_table)
+        lines = _extract_log_lines_from_dataframe(df)
+        if lines:
+            file_info = data_store.uploaded_files.get(best_table, {})
+            return {
+                "success": True,
+                "source": "data_store",
+                "table": best_table,
+                "fileName": file_info.get("filename", f"{best_table}.log"),
+                "lineCount": len(lines),
+                "lines": lines[:1200],
+            }
+
+    raise HTTPException(status_code=404, detail="No centralized simulation log data available")
 
 
 @app.post("/api/upload-reset")
@@ -453,6 +751,18 @@ async def ingest_from_source(connector_type: str):
             'timestamp': __import__('datetime').datetime.now().isoformat(),
             'source': connector_type
         }
+
+        event_bus.publish(
+            topic=os.getenv("KAFKA_TOPIC_INGESTION", "chipiq.ingestion.raw"),
+            key=f"connector:{connector_type}",
+            payload={
+                "eventType": "connector_ingest",
+                "connectorType": connector_type,
+                "tableName": table_name,
+                "rowsIngested": len(df),
+                "columns": list(df.columns),
+            },
+        )
         
         return {
             "success": True,
@@ -466,6 +776,93 @@ async def ingest_from_source(connector_type: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ingestion error: {str(e)}")
+
+
+@app.post("/api/jira/tickets")
+async def create_jira_ticket(request: JiraTicketRequest):
+    """Create a Jira issue from AI diagnosis details."""
+    try:
+        import requests
+
+        base_url = (request.base_url or os.getenv("JIRA_BASE_URL", "")).strip().rstrip("/")
+        username = (request.username or os.getenv("JIRA_USERNAME", "")).strip()
+        api_token = (request.api_token or os.getenv("JIRA_API_TOKEN", "")).strip()
+        project_key = (request.project_key or os.getenv("JIRA_PROJECT_KEY", "")).strip()
+
+        if not base_url or not username or not api_token or not project_key:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Jira configuration missing. Set JIRA_BASE_URL, JIRA_USERNAME, "
+                    "JIRA_API_TOKEN, JIRA_PROJECT_KEY in backend environment."
+                ),
+            )
+
+        issue_payload = {
+            "fields": {
+                "project": {"key": project_key},
+                "summary": request.summary,
+                "description": {
+                    "type": "doc",
+                    "version": 1,
+                    "content": [
+                        {
+                            "type": "paragraph",
+                            "content": [{"type": "text", "text": request.description}],
+                        }
+                    ],
+                },
+                "issuetype": {"name": request.issue_type or "Bug"},
+            }
+        }
+
+        if request.priority:
+            issue_payload["fields"]["priority"] = {"name": request.priority}
+        if request.labels:
+            issue_payload["fields"]["labels"] = request.labels
+
+        resp = requests.post(
+            f"{base_url}/rest/api/3/issue",
+            auth=(username, api_token),
+            headers={"Accept": "application/json", "Content-Type": "application/json"},
+            json=issue_payload,
+            timeout=15,
+        )
+
+        if resp.status_code not in (200, 201):
+            try:
+                err_body = resp.json()
+            except Exception:
+                err_body = {"raw": resp.text}
+            raise HTTPException(status_code=resp.status_code, detail=f"Jira issue creation failed: {err_body}")
+
+        body = resp.json()
+        key = body.get("key")
+        ticket_url = f"{base_url}/browse/{key}" if key else None
+        event_bus.publish(
+            topic=os.getenv("KAFKA_TOPIC_JIRA", "chipiq.jira.events"),
+            key="jira_ticket",
+            payload={
+                "eventType": "jira_ticket_created",
+                "issueKey": key,
+                "project": project_key,
+                "summary": request.summary,
+                "issueType": request.issue_type,
+            },
+        )
+
+        return {
+            "success": True,
+            "issueKey": key,
+            "issueId": body.get("id"),
+            "ticketUrl": ticket_url,
+            "project": project_key,
+            "message": f"Jira ticket created: {key}" if key else "Jira ticket created",
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Jira ticket creation error: {str(e)}")
 
 
 # ─── Forecasting API ──────────────────────────────────────────────────────
@@ -646,6 +1043,12 @@ async def delete_enrollment(email: str):
 def health():
     enrolled_count = len(list(FACE_DATA_DIR.glob("*.npy")))
     available_payloads = sum(1 for file_name in DATASET_FILES.values() if (INTEGRATED_DATA_DIR / file_name).exists())
+    jira_configured = all([
+        bool(os.getenv("JIRA_BASE_URL", "").strip()),
+        bool(os.getenv("JIRA_USERNAME", "").strip()),
+        bool(os.getenv("JIRA_API_TOKEN", "").strip()),
+        bool(os.getenv("JIRA_PROJECT_KEY", "").strip()),
+    ])
     return {
         "status": "healthy",
         "supported_models": sorted(list(SUPPORTED_MODELS)),
@@ -654,4 +1057,8 @@ def health():
         "face_data_dir": str(FACE_DATA_DIR),
         "integrated_data_dir": str(INTEGRATED_DATA_DIR),
         "integrated_payloads_available": available_payloads,
+        "jira_configured": jira_configured,
+        "event_bus": event_bus.health(),
+        "etl": etl_pipeline.status(),
+        "timescale": timescale_store.status(),
     }

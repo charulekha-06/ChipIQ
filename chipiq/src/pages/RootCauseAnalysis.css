@@ -29,6 +29,16 @@
   margin: 8px 0 0 0;
 }
 
+.lake-status-box {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border: 1px solid #000000;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #111111;
+  background: rgba(0, 0, 0, 0.02);
+}
+
 .drop-zone {
   flex: 1;
   border: 2px dashed #000000;
@@ -237,6 +247,39 @@
 .fix-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(63, 185, 80, 0.3);
+}
+
+.fix-btn:disabled {
+  background: #e5e7eb;
+  color: #4b5563;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.jira-status {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.jira-status.success {
+  background: rgba(22, 163, 74, 0.08);
+  border: 1px solid rgba(22, 163, 74, 0.3);
+  color: #166534;
+}
+
+.jira-status.success a {
+  color: #14532d;
+  font-weight: 700;
+}
+
+.jira-status.error {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #b91c1c;
 }
 
 .reset-btn {

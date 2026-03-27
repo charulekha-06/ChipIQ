@@ -174,7 +174,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  items-center: center;
+  align-items: center;
   justify-content: center;
   text-align: center;
   gap: 24px;
@@ -216,6 +216,7 @@
   display: flex;
   align-items: baseline;
   gap: 8px;
+  min-height: 40px;
 }
 
 .res-baseline {
@@ -261,6 +262,10 @@
 }
 
 .ai-text b { color: var(--cyan); }
+.ai-text .impact-from {
+  color: #000000;
+  font-weight: 600;
+}
 .ai-text .impact-score { color: #000000; font-weight: 700; }
 
 .status-dot-yellow {

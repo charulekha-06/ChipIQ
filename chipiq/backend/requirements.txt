@@ -12,3 +12,6 @@ tensorflow==2.17.0
 python-multipart==0.0.12
 Pillow==10.4.0
 tf-keras==2.17.0
+kafka-python==2.0.2
+pyspark==3.5.2
+psycopg[binary]==3.2.1

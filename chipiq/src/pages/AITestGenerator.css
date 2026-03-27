@@ -116,6 +116,7 @@
   font-size: 13px;
   line-height: 1.5;
   color: #e6edf3;
+  background: #0f172a;
   overflow-x: auto;
   white-space: pre-wrap;
 }
@@ -178,8 +179,9 @@
 }
 
 .generate-btn:disabled {
-  background: #000000;
-  color: #000000;
+  background: #e5e7eb;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
   cursor: not-allowed;
 }
 

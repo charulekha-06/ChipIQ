@@ -57,6 +57,10 @@ export default function Simulator() {
     setIsSimulated(true);
   };
 
+  const showTapeoutBaseline = baselineTapeout !== null && projectedTapeout !== null && baselineTapeout !== projectedTapeout;
+  const showCoverageBaseline = baselineCov !== null && projectedCov !== null && baselineCov !== projectedCov;
+  const tapeoutChanged = baselineTapeout !== null && projectedTapeout !== null && baselineTapeout !== projectedTapeout;
+
   return (
     <div className="simulator-page">
       {/* Header Banner */}
@@ -169,28 +173,26 @@ export default function Simulator() {
                 <div className="res-card">
                   <div className="res-label">TAPEOUT SCORE</div>
                   <div className="res-main">
-                    <span className="res-baseline">{baselineTapeout ?? '--'}</span>
+                    {showTapeoutBaseline ? <span className="res-baseline">{baselineTapeout}</span> : null}
                     <span className="res-val">{projectedTapeout ?? '--'}</span>
                   </div>
                 </div>
                 <div className="res-card">
                   <div className="res-label">DAYS TO TAPEOUT</div>
                   <div className="res-main">
-                    <span className="res-baseline">--</span>
                     <span className="res-val">{daysToTapeout === null ? '--' : `${daysToTapeout}d`}</span>
                   </div>
                 </div>
                 <div className="res-card">
                   <div className="res-label">COVERAGE</div>
                   <div className="res-main">
-                    <span className="res-baseline">{baselineCov === null ? '--' : `${baselineCov}%`}</span>
+                    {showCoverageBaseline ? <span className="res-baseline">{`${baselineCov}%`}</span> : null}
                     <span className="res-val cyan">{projectedCov === null ? '--' : `${projectedCov}%`}</span>
                   </div>
                 </div>
                 <div className="res-card">
                   <div className="res-label">CRITICAL BUGS FIXED</div>
                   <div className="res-main">
-                    <span className="res-baseline">0</span>
                     <span className="res-val">{criticalFixed}</span>
                   </div>
                 </div>
@@ -202,7 +204,14 @@ export default function Simulator() {
                   <span>AI ANALYSIS</span>
                 </div>
                 <p className="ai-text">
-                  Adding <b>{engineers} engineers</b> and <b>{cycles} test cycles</b> with focus on <b>{module || '--'}</b> updates tapeout estimate from <span className="res-baseline">{baselineTapeout ?? '--'}</span> to <span className="impact-score">{projectedTapeout ?? '--'}</span> based on integrated project data.
+                  Adding <b>{engineers} engineers</b> and <b>{cycles} test cycles</b> with focus on <b>{module || '--'}</b>{' '}
+                  {baselineTapeout === null || projectedTapeout === null ? (
+                    <>provides an estimated tapeout score of <span className="impact-score">--</span> based on integrated project data.</>
+                  ) : tapeoutChanged ? (
+                    <>updates tapeout estimate from <span className="impact-from">{baselineTapeout}</span> to <span className="impact-score">{projectedTapeout}</span> based on integrated project data.</>
+                  ) : (
+                    <>keeps the tapeout estimate unchanged at <span className="impact-score">{projectedTapeout}</span> based on integrated project data.</>
+                  )}
                 </p>
               </div>
             </div>

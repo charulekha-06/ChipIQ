@@ -1,0 +1,211 @@
+.tapeout-readiness-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.readiness-main-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+}
+
+/* Left Panel */
+.gauge-panel-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.panel-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #000000;
+  letter-spacing: 1px;
+  margin-bottom: 40px;
+}
+
+.large-gauge-container {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin-bottom: 40px;
+}
+
+.gauge-bg {
+  stroke: transparent;
+  stroke-width: 10;
+  fill: none;
+}
+
+.gauge-fill {
+  stroke-width: 10;
+  stroke-linecap: round;
+  fill: none;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 1.5s ease-out;
+}
+
+.gauge-center {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gauge-value {
+  font-size: 56px;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.gauge-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #000000;
+  margin-top: 8px;
+}
+
+.gauge-status-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.gauge-status-text .dim {
+  color: #000000;
+}
+
+/* Right Panel Details */
+.mb-20 { margin-bottom: 20px; }
+
+.breakdown-list {
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.breakdown-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.row-label {
+  width: 100px;
+  font-size: 13px;
+  color: #000000;
+}
+
+.row-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: transparent;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.row-bar-fill { height: 100%; border-radius: 4px; }
+.row-bar-fill.blue { background: #3b82f6; }
+.row-bar-fill.cyan { background: #D32F2F; }
+.row-bar-fill.red { background: #D32F2F; }
+
+.row-value {
+  width: 40px;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.row-value.blue { color: #3b82f6; }
+.row-value.cyan { color: #D32F2F; }
+.row-value.red { color: #D32F2F; }
+
+/* Checklist */
+.checklist-container {
+  padding: 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checklist-item {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.check-icon { font-size: 20px; flex-shrink: 0; }
+.checklist-item.pass .check-icon { color: #111111; }
+.checklist-item.warn .check-icon { color: #000000; }
+.checklist-item.fail .check-icon { color: #D32F2F; }
+
+.checklist-item.warn { background: rgba(245, 158, 11, 0.02); border-color: rgba(245, 158, 11, 0.1); }
+.checklist-item.fail { background: rgba(239, 68, 68, 0.02); border-color: rgba(239, 68, 68, 0.1); }
+
+.check-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
+.check-sub { font-size: 11px; color: #000000; }
+
+/* Recommendations */
+.recommendations-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.rec-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.rec-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.rec-header span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.rec-icon { font-size: 16px; }
+.rec-card p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.orange { color: #000000; }
+.purple { color: #a855f7; }
+.cyan { color: #D32F2F; }

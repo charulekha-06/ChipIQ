@@ -1,0 +1,30 @@
+[
+    {
+        "name":  "Uart8Receiver",
+        "riskScore":  95,
+        "coverage":  68,
+        "openBugs":  7,
+        "status":  "CRITICAL"
+    },
+    {
+        "name":  "Uart8Transmitter",
+        "riskScore":  89,
+        "coverage":  82,
+        "openBugs":  7,
+        "status":  "CRITICAL"
+    },
+    {
+        "name":  "BaudRateGenerator",
+        "riskScore":  47,
+        "coverage":  96,
+        "openBugs":  3,
+        "status":  "MEDIUM"
+    },
+    {
+        "name":  "Uart8",
+        "riskScore":  47,
+        "coverage":  96,
+        "openBugs":  3,
+        "status":  "MEDIUM"
+    }
+]

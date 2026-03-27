@@ -1,0 +1,13 @@
+{
+    "repo":  "TimRudy/uart-verilog",
+    "commit":  "4a25276",
+    "generated_at":  "2026-03-27T10:54:34.2417067+05:30",
+    "logs_count":  37,
+    "bug_reports_github_count":  0,
+    "bug_reports_inferred_count":  6,
+    "coverage_rows":  21,
+    "rtl_commit_count":  15,
+    "regression_total":  37,
+    "regression_pass":  37,
+    "regression_fail":  0
+}

@@ -1,0 +1,7 @@
+"source","bug_id","title","created_at","status","url"
+"git_commit_subject","453e51c2","Fix edge case bug in the transition from stop to start","2023-01-03T23:50:37-05:00","closed_or_fixed","https://github.com/TimRudy/uart-verilog/commit/453e51c2eae7aa82e6eaacc436e734d5b44ba34f"
+"git_commit_subject","5b8197bb","Fix err output during the transition to start","2023-01-02T12:41:17-05:00","closed_or_fixed","https://github.com/TimRudy/uart-verilog/commit/5b8197bb48b48aa9018b74f6d842a821bf95671a"
+"git_commit_subject","627ce976","Fix sampling to be in the exact middle of start signal","2023-01-02T12:32:59-05:00","closed_or_fixed","https://github.com/TimRudy/uart-verilog/commit/627ce97662242f72842698000d9af1a46cce2a6c"
+"git_commit_subject","83523455","Add test benches and fix bugs","2022-12-10T20:25:33-05:00","closed_or_fixed","https://github.com/TimRudy/uart-verilog/commit/8352345541216661f591fc4fc763969519578904"
+"git_commit_subject","85f00855","Add test benches and fix bugs","2022-12-09T00:31:41-05:00","closed_or_fixed","https://github.com/TimRudy/uart-verilog/commit/85f00855f66e79999ced68e68dfc8260c55c7899"
+"git_commit_subject","857af15a","Add test benches and fix bugs","2022-10-23T18:36:18-04:00","closed_or_fixed","https://github.com/TimRudy/uart-verilog/commit/857af15ac579268cee37f841b55edcd4aa42fbdc"

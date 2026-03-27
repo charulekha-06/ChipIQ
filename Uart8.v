@@ -11,7 +11,8 @@
 module Uart8 #(
     parameter CLOCK_RATE   = 100000000, // board clock (default 100MHz)
     parameter BAUD_RATE    = 9600,
-    parameter TURBO_FRAMES = 0          // see Uart8Transmitter
+    parameter TURBO_FRAMES = 0,         // see Uart8Transmitter
+    parameter RX_OVERSAMPLE_RATE = 16
 )(
     input wire clk, // board clock (*note: at the {CLOCK_RATE} rate)
 
@@ -31,9 +32,6 @@ module Uart8 #(
     output wire txDone,
     output wire tx
 );
-
-// this value cannot be changed in the current implementation
-parameter RX_OVERSAMPLE_RATE = 16;
 
 wire rxClk;
 wire txClk;

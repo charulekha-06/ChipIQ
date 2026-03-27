@@ -17,6 +17,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import html2pdf from 'html2pdf.js';
 import './Reports.css';
 
 const bugActivityData = [
@@ -47,6 +48,19 @@ const reports = [
 ];
 
 export default function Reports() {
+  const exportPDF = (title) => {
+    const element = document.querySelector('.reports-page');
+    if (!element) return;
+    const opt = {
+      margin: 0.5,
+      filename: `${title.toLowerCase().replace(/ /g, '_')}_report.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().set(opt).from(element).save();
+  };
+
   return (
     <div className="reports-page">
       {/* Stats Grid */}
@@ -119,7 +133,7 @@ export default function Reports() {
                 <h4>{report.title}</h4>
                 <p>{report.desc}</p>
               </div>
-              <a href="#" className={`download-btn ${report.color}`} onClick={(e) => e.preventDefault()}>
+              <a href="#" className={`download-btn ${report.color}`} onClick={(e) => { e.preventDefault(); exportPDF(report.title); }}>
                 ↓ Download PDF
               </a>
             </div>

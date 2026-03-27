@@ -1,5 +1,6 @@
 import React from 'react';
-import { HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineXCircle, HiOutlineLightningBolt, HiOutlineChartBar, HiOutlineShieldCheck } from 'react-icons/hi';
+import { HiOutlineCheckCircle, HiOutlineExclamationCircle, HiOutlineXCircle, HiOutlineLightningBolt, HiOutlineChartBar, HiOutlineShieldCheck, HiOutlineDownload } from 'react-icons/hi';
+import html2pdf from 'html2pdf.js';
 import './TapeoutReadiness.css';
 
 export default function TapeoutReadiness() {
@@ -7,8 +8,26 @@ export default function TapeoutReadiness() {
   const circumference = 2 * Math.PI * 65;
   const dashOffset = circumference - (tapeoutScore / 100) * circumference;
 
+  const exportPDF = () => {
+    const element = document.querySelector('.tapeout-readiness-page');
+    if (!element) return;
+    const opt = {
+      margin: 0.5,
+      filename: `tapeout_readiness_${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+    };
+    html2pdf().set(opt).from(element).save();
+  };
+
   return (
     <div className="page tapeout-readiness-page">
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
+         <button onClick={exportPDF} style={{ background: '#3FB950', color: '#fff', border: 'none', padding: '10px 16px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
+           <HiOutlineDownload size={16} /> Export to PDF
+         </button>
+      </div>
       <div className="readiness-main-grid">
         {/* Left: Score Gauge */}
         <div className="gauge-panel-card">

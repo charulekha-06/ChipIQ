@@ -17,7 +17,7 @@ export default function Simulator() {
       {/* Header Banner */}
       {!isSimulated ? (
         <div className="simulation-banner">
-          <HiOutlineFire className="banner-icon" color="#f59e0b" />
+          <HiOutlineFire className="banner-icon" color="#000000" />
           <div className="banner-content">
             <span className="banner-title">Scenario Simulator — What-If Analysis</span>
             <span className="banner-subtitle">Adjust inputs to see how resource changes affect tapeout readiness</span>

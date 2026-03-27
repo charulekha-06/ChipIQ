@@ -78,7 +78,7 @@ export default function RootCauseAnalysis() {
   return (
     <div className="rca-container">
       <div className="rca-header">
-        <h1 className="rca-title"><HiOutlineSearchCircle color="#00E5FF" size={28} /> AI Log Anomaly Detector</h1>
+        <h1 className="rca-title"><HiOutlineSearchCircle color="#D32F2F" size={28} /> AI Log Anomaly Detector</h1>
         <p className="rca-subtitle">Upload simulation log files (.log, .txt, .fsdb) for automated error isolation and AI diagnostics.</p>
       </div>
 
@@ -91,7 +91,7 @@ export default function RootCauseAnalysis() {
           onDrop={handleDrop}
           onClick={startAnalysis}
         >
-          <HiOutlineDocumentDownload size={64} color={dragActive ? '#00E5FF' : '#484f58'} />
+          <HiOutlineDocumentDownload size={64} color={dragActive ? '#D32F2F' : '#000000'} />
           <div className="drop-text">Drag & Drop Simulation Log</div>
           <div className="drop-subtext">or click to manually upload the file (e.g. `sim_vsim.log`)</div>
         </div>
@@ -100,7 +100,7 @@ export default function RootCauseAnalysis() {
       {state === 'scanning' && (
         <div className="scanning-container">
           <div className="scan-line"></div>
-          <HiOutlineSearchCircle color="#00E5FF" size={64} className="rotating-icon" />
+          <HiOutlineSearchCircle color="#D32F2F" size={64} className="rotating-icon" />
           <div className="scan-text">ANALYZING LOG FILE...</div>
           <div className="scan-logs">
             {scanProgress.map((txt, i) => <div key={i}>{txt}</div>)}
@@ -133,9 +133,9 @@ export default function RootCauseAnalysis() {
           </div>
 
           <div className="ai-diagnosis-panel">
-            <div className="panel-header" style={{ borderBottomColor: '#30363d' }}>
+            <div className="panel-header" style={{ borderBottomColor: '#000000' }}>
               <span style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-                <HiOutlineSearchCircle color="#00E5FF" /> AI Root Cause Diagnosis
+                <HiOutlineSearchCircle color="#D32F2F" /> AI Root Cause Diagnosis
               </span>
             </div>
             <div className="diagnosis-content">

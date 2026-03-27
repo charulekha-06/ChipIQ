@@ -3,7 +3,7 @@
   height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
-  color: #c9d1d9;
+  color: #111111;
 }
 
 .upload-header {
@@ -13,7 +13,7 @@
 .upload-title {
   font-size: 24px;
   font-weight: 600;
-  color: #fff;
+  color: #000000;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -21,7 +21,7 @@
 }
 
 .upload-subtitle {
-  color: #8b949e;
+  color: #000000;
   font-size: 14px;
   margin: 8px 0 0 0;
 }
@@ -43,9 +43,9 @@
 
 .massive-drop-zone {
   flex: 1;
-  border: 2px dashed #30363d;
+  border: 2px dashed #000000;
   border-radius: 12px;
-  background-color: #0d1117;
+  background-color: #FFFFFF;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -57,12 +57,12 @@
 }
 
 .massive-drop-zone.active, .massive-drop-zone:hover {
-  border-color: #00E5FF;
-  background-color: rgba(0, 229, 255, 0.05);
+  border-color: #D32F2F;
+  background-color: rgba(211, 47, 47, 0.05);
 }
 
 .drop-icon-wrapper {
-  background: rgba(0, 229, 255, 0.1);
+  background: rgba(211, 47, 47, 0.1);
   padding: 20px;
   border-radius: 50%;
   margin-bottom: 16px;
@@ -70,13 +70,13 @@
 
 .drop-title {
   font-size: 18px;
-  color: #fff;
+  color: #000000;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
 .drop-desc {
-  color: #8b949e;
+  color: #000000;
   font-size: 13px;
   max-width: 300px;
   line-height: 1.5;
@@ -89,19 +89,19 @@
 }
 
 .format-badge {
-  background-color: #161b22;
-  border: 1px solid #30363d;
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 11px;
   font-family: monospace;
-  color: #8b949e;
+  color: #000000;
 }
 
 /* Active Uploads Area */
 .active-uploads-panel {
-  background-color: #161b22;
-  border: 1px solid #30363d;
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
   border-radius: 12px;
   padding: 20px;
 }
@@ -109,7 +109,7 @@
 .panel-title {
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
+  color: #000000;
   margin: 0 0 16px 0;
   display: flex;
   align-items: center;
@@ -117,8 +117,8 @@
 }
 
 .upload-job {
-  background-color: #0d1117;
-  border: 1px solid #30363d;
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 12px;
@@ -138,7 +138,7 @@
 .job-filename {
   font-size: 13px;
   font-weight: 600;
-  color: #c9d1d9;
+  color: #111111;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -146,28 +146,28 @@
 
 .job-stats {
   font-size: 12px;
-  color: #8b949e;
+  color: #000000;
   font-family: monospace;
 }
 
 .job-progress-bg {
   height: 6px;
-  background-color: #30363d;
+  background-color: #000000;
   border-radius: 3px;
   overflow: hidden;
 }
 
 .job-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #00E5FF, #00B8D9);
+  background: linear-gradient(90deg, #D32F2F, #00B8D9);
   transition: width 0.3s ease;
 }
 
 /* Right side: History */
 .upload-right {
   flex: 1;
-  background-color: #161b22;
-  border: 1px solid #30363d;
+  background-color: #FFFFFF;
+  border: 1px solid #000000;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -176,7 +176,7 @@
 
 .history-header {
   padding: 20px;
-  border-bottom: 1px solid #30363d;
+  border-bottom: 1px solid #000000;
 }
 
 .history-list {
@@ -191,7 +191,7 @@
   gap: 16px;
   padding-bottom: 16px;
   margin-bottom: 16px;
-  border-bottom: 1px solid #30363d;
+  border-bottom: 1px solid #000000;
 }
 
 .history-item:last-child {
@@ -202,7 +202,7 @@
 
 .history-icon {
   background-color: rgba(63, 185, 80, 0.1);
-  color: #3FB950;
+  color: #111111;
   padding: 10px;
   border-radius: 8px;
   display: flex;
@@ -217,13 +217,13 @@
 .history-name {
   font-size: 13px;
   font-weight: 500;
-  color: #c9d1d9;
+  color: #111111;
   margin-bottom: 4px;
 }
 
 .history-meta {
   font-size: 11px;
-  color: #8b949e;
+  color: #000000;
   display: flex;
   gap: 12px;
 }

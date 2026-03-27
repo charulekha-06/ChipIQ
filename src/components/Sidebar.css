@@ -41,7 +41,7 @@
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   color: var(--text-secondary);
@@ -52,7 +52,7 @@
 }
 
 .project-selector:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: transparent;
   border-color: var(--border-accent);
 }
 
@@ -72,13 +72,13 @@
   gap: 6px;
   font-size: 12px;
   font-weight: 500;
-  color: #22c55e;
+  color: #111111;
 }
 
 .status-dot {
   width: 6px;
   height: 6px;
-  background: #22c55e;
+  background: #111111;
   border-radius: 50%;
   box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
 }
@@ -106,7 +106,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #000000;
   font-size: 12px;
   font-weight: 700;
 }
@@ -168,8 +168,8 @@
 }
 
 .nav-tab-badge {
-  background: #ef4444;
-  color: #fff;
+  background: #D32F2F;
+  color: #000000;
   font-size: 10px;
   font-weight: 700;
   min-width: 16px;

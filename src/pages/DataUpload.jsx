@@ -77,7 +77,7 @@ export default function DataUpload() {
   return (
     <div className="upload-container">
       <div className="upload-header">
-        <h1 className="upload-title"><HiOutlineCloudUpload color="#00E5FF" size={28} /> Verification Data Hub</h1>
+        <h1 className="upload-title"><HiOutlineCloudUpload color="#D32F2F" size={28} /> Verification Data Hub</h1>
         <p className="upload-subtitle">Securely transfer massive simulation waveforms, RTL patches, and testbench archives to the cloud compute cluster.</p>
       </div>
 
@@ -93,7 +93,7 @@ export default function DataUpload() {
             onClick={handleDrop}
           >
             <div className="drop-icon-wrapper">
-              <HiOutlineCloudUpload size={48} color="#00E5FF" />
+              <HiOutlineCloudUpload size={48} color="#D32F2F" />
             </div>
             <div className="drop-title">Drag & Drop Assets Here</div>
             <div className="drop-desc">Supports multi-gigabyte uploads with automatic resume capability and delta compression.</div>
@@ -113,11 +113,11 @@ export default function DataUpload() {
                 <div key={job.id} className="upload-job">
                   <div className="job-header">
                     <div className="job-filename">
-                      {job.name.endsWith('.fsdb') ? <HiOutlineArchive color="#FFBF00"/> : <HiOutlineDocumentText color="#3FB950"/>}
+                      {job.name.endsWith('.fsdb') ? <HiOutlineArchive color="#000000"/> : <HiOutlineDocumentText color="#111111"/>}
                       {job.name}
                     </div>
                     <div className="job-stats">
-                      {job.progress < 100 ? `${job.speed} • ${job.progress}% of ${job.size}` : <span style={{color: '#3FB950'}}>Completed</span>}
+                      {job.progress < 100 ? `${job.speed} • ${job.progress}% of ${job.size}` : <span style={{color: '#111111'}}>Completed</span>}
                     </div>
                   </div>
                   <div className="job-progress-bg">

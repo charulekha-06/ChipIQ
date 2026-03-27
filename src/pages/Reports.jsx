@@ -92,12 +92,12 @@ export default function Reports() {
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={bugActivityData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11 }} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }} />
-              <Bar dataKey="added" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={24} />
-              <Bar dataKey="fixed" fill="#22c55e" radius={[4, 4, 0, 0]} barSize={24} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.03)" vertical={false} />
+              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#000000', fontSize: 11 }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fill: '#000000', fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: '#FFFFFF', border: '1px solid #334155', borderRadius: '8px' }} />
+              <Bar dataKey="added" fill="#D32F2F" radius={[4, 4, 0, 0]} barSize={24} />
+              <Bar dataKey="fixed" fill="#111111" radius={[4, 4, 0, 0]} barSize={24} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -109,11 +109,11 @@ export default function Reports() {
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={coverageTrendData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
-              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11 }} />
-              <YAxis domain={[65, 100]} axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }} />
-              <Line type="monotone" dataKey="coverage" stroke="#22d3ee" strokeWidth={3} dot={{ fill: '#22d3ee', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.03)" vertical={false} />
+              <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: '#000000', fontSize: 11 }} />
+              <YAxis domain={[65, 100]} axisLine={false} tickLine={false} tick={{ fill: '#000000', fontSize: 11 }} />
+              <Tooltip contentStyle={{ background: '#FFFFFF', border: '1px solid #334155', borderRadius: '8px' }} />
+              <Line type="monotone" dataKey="coverage" stroke="#D32F2F" strokeWidth={3} dot={{ fill: '#D32F2F', strokeWidth: 2, r: 4 }} activeDot={{ r: 6 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

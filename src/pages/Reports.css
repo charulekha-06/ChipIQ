@@ -23,7 +23,7 @@
 .report-stat-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-dim);
+  color: #000000;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 20px;
@@ -34,8 +34,8 @@
   font-weight: 800;
 }
 
-.report-stat-value.red { color: #ef4444; }
-.report-stat-value.green { color: #22c55e; }
+.report-stat-value.red { color: #D32F2F; }
+.report-stat-value.green { color: #111111; }
 .report-stat-value.orange { color: #f97316; }
 
 /* Charts Grid */
@@ -65,7 +65,7 @@
 
 .report-chart-header p {
   font-size: 13px;
-  color: var(--text-dim);
+  color: #000000;
 }
 
 /* Download Section */
@@ -84,7 +84,7 @@
 }
 
 .download-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.02);
   padding: 24px;
   border-radius: 12px;
   border: 1px solid var(--border);
@@ -95,7 +95,7 @@
 }
 
 .download-card:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .download-icon {
@@ -110,7 +110,7 @@
 
 .download-card p {
   font-size: 12px;
-  color: var(--text-dim);
+  color: #000000;
   line-height: 1.5;
   min-height: 36px;
 }
@@ -133,12 +133,12 @@
   opacity: 0.8;
 }
 
-.download-btn.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+.download-btn.red { background: rgba(239, 68, 68, 0.1); color: #D32F2F; border: 1px solid rgba(239, 68, 68, 0.2); }
 .download-btn.orange { background: rgba(249, 115, 22, 0.1); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.2); }
 .download-btn.cyan { background: rgba(34, 211, 238, 0.1); color: var(--cyan); border: 1px solid rgba(34, 211, 238, 0.2); }
 .download-btn.yellow { background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.2); }
-.download-btn.green { background: rgba(34, 197, 94, 0.1); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.2); }
-.download-btn.grey { background: rgba(255, 255, 255, 0.05); color: var(--text-dim); border: 1px solid var(--border); }
+.download-btn.green { background: rgba(34, 197, 94, 0.1); color: #111111; border: 1px solid rgba(34, 197, 94, 0.2); }
+.download-btn.grey { background: transparent; color: #000000; border: 1px solid var(--border); }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

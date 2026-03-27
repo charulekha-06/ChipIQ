@@ -20,7 +20,7 @@
 .status-active-pulse {
   width: 10px;
   height: 10px;
-  background: #22c55e;
+  background: #111111;
   border-radius: 50%;
   box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
   animation: pulse 2s infinite;
@@ -35,11 +35,11 @@
 .status-text-primary {
   font-size: 16px;
   font-weight: 700;
-  color: #22c55e;
+  color: #111111;
 }
 
 .status-divider {
-  color: var(--text-dim);
+  color: #000000;
   font-size: 14px;
 }
 
@@ -76,7 +76,7 @@
 
 .panel-title p {
   font-size: 14px;
-  color: var(--text-dim);
+  color: #000000;
 }
 
 /* Architecture Flow */
@@ -98,7 +98,7 @@
   text-align: center;
   gap: 8px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .flow-node.source { border-color: rgba(34, 211, 238, 0.3); background: rgba(34, 211, 238, 0.05); }
@@ -113,19 +113,19 @@
 }
 
 .source .node-title { color: var(--cyan); }
-.queue .node-title { color: #f59e0b; }
+.queue .node-title { color: #000000; }
 .etl .node-title { color: #f97316; }
-.db .node-title { color: #22c55e; }
+.db .node-title { color: #111111; }
 .ai .node-title { color: var(--cyan); }
 
 .node-desc {
   font-size: 11px;
-  color: var(--text-dim);
+  color: #000000;
   line-height: 1.4;
 }
 
 .flow-arrow {
-  color: var(--text-dim);
+  color: #000000;
   font-size: 16px;
   opacity: 0.5;
 }
@@ -157,7 +157,7 @@
   padding: 12px 0;
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #000000;
   text-transform: uppercase;
   letter-spacing: 1px;
   border-bottom: 1px solid var(--border);
@@ -167,7 +167,7 @@
   padding: 16px 0;
   font-size: 13px;
   color: var(--text-primary);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
 }
 
 .sources-table tr:last-child td {
@@ -183,7 +183,7 @@
 }
 
 .source-sync {
-  color: var(--text-dim);
+  color: #000000;
 }
 
 .source-records {
@@ -199,18 +199,18 @@
   font-weight: 600;
 }
 
-.status-indicator.active { color: #22c55e; }
-.status-indicator.warning { color: #f59e0b; }
-.status-indicator.inactive { color: var(--text-dim); }
+.status-indicator.active { color: #111111; }
+.status-indicator.warning { color: #000000; }
+.status-indicator.inactive { color: #000000; }
 
 .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
 }
-.active .dot { background: #22c55e; box-shadow: 0 0 6px rgba(34, 197, 94, 0.5); }
-.warning .dot { background: #f59e0b; }
-.inactive .dot { background: #475569; }
+.active .dot { background: #111111; box-shadow: 0 0 6px rgba(34, 197, 94, 0.5); }
+.warning .dot { background: #000000; }
+.inactive .dot { background: #000000; }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

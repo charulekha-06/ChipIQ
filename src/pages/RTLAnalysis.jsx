@@ -78,25 +78,25 @@ export default function RTLAnalysis() {
           </div>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={timelineData} margin={{ top: 10, right: 10, bottom: 0, left: -20 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.03)" vertical={false} />
               <XAxis 
                 dataKey="day" 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fill: '#475569', fontSize: 11 }}
+                tick={{ fill: '#000000', fontSize: 11 }}
               />
               <YAxis 
                 axisLine={false} 
                 tickLine={false} 
-                tick={{ fill: '#475569', fontSize: 11 }}
+                tick={{ fill: '#000000', fontSize: 11 }}
               />
               <Tooltip 
-                contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }}
-                itemStyle={{ color: '#ef4444' }}
+                contentStyle={{ background: '#FFFFFF', border: '1px solid #334155', borderRadius: '8px' }}
+                itemStyle={{ color: '#D32F2F' }}
               />
               <Bar 
                 dataKey="bugs" 
-                fill="#ef4444" 
+                fill="#D32F2F" 
                 fillOpacity={0.6}
                 radius={[4, 4, 0, 0]} 
                 barSize={32}
@@ -121,7 +121,7 @@ export default function RTLAnalysis() {
               <div className="failure-info">
                 <span className="failure-name">Timing Violation</span>
                 <span className="failure-stats">
-                  <b>6</b> <span>·</span> <span style={{color: '#ef4444'}}>43%</span>
+                  <b>6</b> <span>·</span> <span style={{color: '#D32F2F'}}>43%</span>
                 </span>
               </div>
               <div className="failure-bar-bg">

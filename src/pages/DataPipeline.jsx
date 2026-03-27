@@ -23,7 +23,7 @@ export default function DataPipeline() {
         <span className="status-divider">·</span>
         <span className="status-metric">Throughput: <span className="status-val" style={{ color: 'var(--cyan)' }}>~1,200 events/sec</span></span>
         <span className="status-divider">·</span>
-        <span className="status-metric">Lag: <span className="status-val" style={{ color: '#22c55e' }}>18ms</span></span>
+        <span className="status-metric">Lag: <span className="status-val" style={{ color: '#111111' }}>18ms</span></span>
       </div>
 
       {/* Architecture Flow */}

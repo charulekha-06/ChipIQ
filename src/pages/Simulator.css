@@ -23,9 +23,9 @@
 }
 
 .banner-icon { font-size: 20px; }
-.banner-title { font-size: 16px; font-weight: 700; color: #f59e0b; }
+.banner-title { font-size: 16px; font-weight: 700; color: #000000; }
 .simulation-banner.complete .banner-title { color: var(--cyan); }
-.banner-subtitle { font-size: 14px; color: var(--text-dim); }
+.banner-subtitle { font-size: 14px; color: #000000; }
 
 /* Layout Grid */
 .simulator-grid {
@@ -72,7 +72,7 @@
 
 .input-label-box p {
   font-size: 13px;
-  color: var(--text-dim);
+  color: #000000;
 }
 
 .input-val-box {
@@ -89,7 +89,7 @@
 
 .input-unit {
   font-size: 14px;
-  color: var(--text-dim);
+  color: #000000;
   font-weight: 500;
 }
 
@@ -111,14 +111,14 @@
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 0 10px var(--cyan-glow);
-  border: 2px solid #fff;
+  border: 2px solid #000000;
 }
 
 .slider-labels {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: var(--text-muted);
+  color: #000000;
   font-weight: 600;
 }
 
@@ -130,11 +130,11 @@
 }
 
 .module-select-btn {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--border);
   padding: 10px;
   border-radius: 8px;
-  color: var(--text-dim);
+  color: #000000;
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -178,7 +178,7 @@
   justify-content: center;
   text-align: center;
   gap: 24px;
-  color: var(--text-dim);
+  color: #000000;
 }
 
 .results-empty .target-icon {
@@ -198,7 +198,7 @@
 }
 
 .res-card {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.03);
   padding: 20px;
   border-radius: 12px;
   border: 1px solid var(--border);
@@ -207,7 +207,7 @@
 .res-label {
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #000000;
   letter-spacing: 1px;
   margin-bottom: 16px;
 }
@@ -220,14 +220,14 @@
 
 .res-baseline {
   font-size: 14px;
-  color: var(--text-dim);
+  color: #000000;
   text-decoration: line-through;
 }
 
 .res-val {
   font-size: 32px;
   font-weight: 800;
-  color: #22c55e;
+  color: #111111;
 }
 
 .res-val.cyan { color: var(--cyan); }
@@ -261,13 +261,13 @@
 }
 
 .ai-text b { color: var(--cyan); }
-.ai-text .impact-score { color: #f59e0b; font-weight: 700; }
+.ai-text .impact-score { color: #000000; font-weight: 700; }
 
 .status-dot-yellow {
   display: inline-block;
   width: 8px;
   height: 8px;
-  background: #f59e0b;
+  background: #000000;
   border-radius: 50%;
   margin: 0 4px;
   box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);

@@ -29,7 +29,7 @@
 }
 
 .settings-header svg {
-  color: var(--text-dim);
+  color: #000000;
   font-size: 20px;
 }
 
@@ -55,7 +55,7 @@
 
 .settings-item-info p {
   font-size: 13px;
-  color: var(--text-dim);
+  color: #000000;
 }
 
 /* Integrations */
@@ -68,7 +68,7 @@
 
 .status-badge.connected {
   background: rgba(34, 197, 94, 0.1);
-  color: #22c55e;
+  color: #111111;
   border: 1px solid rgba(34, 197, 94, 0.2);
 }
 
@@ -139,7 +139,7 @@ input:checked + .slider:before {
 /* AI Model Settings */
 .segmented-control {
   display: flex;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.03);
   padding: 4px;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -148,7 +148,7 @@ input:checked + .slider:before {
 .segment-btn {
   background: none;
   border: none;
-  color: var(--text-dim);
+  color: #000000;
   padding: 6px 16px;
   font-size: 12px;
   font-weight: 600;
@@ -176,7 +176,7 @@ input:checked + .slider:before {
 }
 
 .project-select {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--border);
   color: var(--text-primary);
   padding: 6px 12px;

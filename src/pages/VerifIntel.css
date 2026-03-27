@@ -26,7 +26,7 @@
 
 .intel-header p {
   font-size: 13px;
-  color: var(--text-dim);
+  color: #000000;
 }
 
 /* Bottleneck Analysis */
@@ -61,7 +61,7 @@
 
 .bottleneck-bar-bg {
   height: 8px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.04);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -97,7 +97,7 @@
   align-items: center;
   gap: 16px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.02);
   border: 1px solid var(--border);
   border-radius: 8px;
 }
@@ -111,13 +111,13 @@
   font-size: 16px;
   font-weight: 800;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.04);
 }
 
-.cluster-item.red .cluster-count { color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+.cluster-item.red .cluster-count { color: #D32F2F; border: 1px solid rgba(239, 68, 68, 0.3); }
 .cluster-item.orange .cluster-count { color: #f97316; border: 1px solid rgba(249, 115, 22, 0.3); }
 .cluster-item.yellow .cluster-count { color: #eab308; border: 1px solid rgba(234, 179, 8, 0.3); }
-.cluster-item.green .cluster-count { color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); }
+.cluster-item.green .cluster-count { color: #111111; border: 1px solid rgba(34, 197, 94, 0.3); }
 
 .cluster-content {
   flex: 1;
@@ -140,8 +140,8 @@
   font-size: 10px;
   font-weight: 700;
   padding: 2px 6px;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-dim);
+  background: transparent;
+  color: #000000;
   border-radius: 4px;
   text-transform: uppercase;
 }
@@ -154,10 +154,10 @@
   text-transform: uppercase;
 }
 
-.cluster-priority.red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.cluster-priority.red { background: rgba(239, 68, 68, 0.1); color: #D32F2F; }
 .cluster-priority.orange { background: rgba(249, 115, 22, 0.1); color: #f97316; }
 .cluster-priority.yellow { background: rgba(234, 179, 8, 0.1); color: #eab308; }
-.cluster-priority.green { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.cluster-priority.green { background: rgba(34, 197, 94, 0.1); color: #111111; }
 
 /* Engineer Focus Suggestions */
 .focus-list {
@@ -168,7 +168,7 @@
 
 .focus-card {
   padding: 16px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.02);
   border: 1px solid var(--border);
   border-radius: 12px;
 }
@@ -191,8 +191,8 @@
   font-weight: 700;
 }
 
-.focus-status.needed { color: #ef4444; }
-.focus-status.staffed { color: #22c55e; }
+.focus-status.needed { color: #D32F2F; }
+.focus-status.staffed { color: #111111; }
 
 .focus-allocation {
   display: flex;
@@ -208,7 +208,7 @@
   align-items: center;
   gap: 4px;
   padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.04);
   border-radius: 8px;
   min-width: 100px;
 }
@@ -216,7 +216,7 @@
 .alloc-label {
   font-size: 9px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #000000;
   text-transform: uppercase;
 }
 
@@ -226,13 +226,13 @@
 }
 
 .alloc-arrow {
-  color: var(--text-dim);
+  color: #000000;
   font-size: 18px;
 }
 
 .focus-footer {
   font-size: 11px;
-  color: var(--text-dim);
+  color: #000000;
 }
 
 /* Test Recommendations Table */
@@ -249,7 +249,7 @@
   text-align: left;
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #000000;
   text-transform: uppercase;
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
@@ -262,7 +262,7 @@
 }
 
 .rec-id { font-weight: 700; color: var(--cyan); }
-.rec-mod.red { color: #ef4444; font-weight: 600; }
+.rec-mod.red { color: #D32F2F; font-weight: 600; }
 .rec-mod.orange { color: #f97316; font-weight: 600; }
 .rec-test { color: var(--text-primary); font-weight: 500; }
 .rec-effort { color: var(--text-secondary); }
@@ -275,7 +275,7 @@
   text-transform: uppercase;
 }
 
-.impact-badge.high { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+.impact-badge.high { background: rgba(239, 68, 68, 0.1); color: #D32F2F; border: 1px solid rgba(239, 68, 68, 0.2); }
 .impact-badge.medium { background: rgba(234, 179, 8, 0.1); color: #eab308; border: 1px solid rgba(234, 179, 8, 0.2); }
 
 @keyframes fadeIn {

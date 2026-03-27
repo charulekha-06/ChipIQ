@@ -24,7 +24,7 @@ export default function TapeoutReadiness() {
   return (
     <div className="page tapeout-readiness-page">
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-         <button onClick={exportPDF} style={{ background: '#3FB950', color: '#fff', border: 'none', padding: '10px 16px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
+         <button onClick={exportPDF} style={{ background: '#111111', color: '#000000', border: 'none', padding: '10px 16px', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600 }}>
            <HiOutlineDownload size={16} /> Export to PDF
          </button>
       </div>
@@ -37,9 +37,9 @@ export default function TapeoutReadiness() {
             <svg viewBox="0 0 150 150">
               <defs>
                 <linearGradient id="largeGaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#ef4444" />
-                  <stop offset="50%" stopColor="#f59e0b" />
-                  <stop offset="100%" stopColor="#22c55e" />
+                  <stop offset="0%" stopColor="#D32F2F" />
+                  <stop offset="50%" stopColor="#000000" />
+                  <stop offset="100%" stopColor="#111111" />
                 </linearGradient>
               </defs>
               <circle className="gauge-bg" cx="75" cy="75" r="65" />

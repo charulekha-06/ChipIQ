@@ -50,8 +50,8 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div style={{
-        background: '#1e293b',
-        border: '1px solid rgba(255,255,255,0.1)',
+        background: '#FFFFFF',
+        border: '1px solid rgba(0,0,0,0.1)',
         borderRadius: '8px',
         padding: '10px 14px',
         boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
@@ -95,7 +95,7 @@ export default function Dashboard() {
 
         <div className="stat-card yellow">
           <div className="stat-card-label">Tapeout Readiness</div>
-          <div className="stat-card-value">67<span style={{ fontSize: '18px', fontWeight: 400, color: 'var(--text-muted)' }}>/100</span></div>
+          <div className="stat-card-value">67<span style={{ fontSize: '18px', fontWeight: 400, color: '#000000' }}>/100</span></div>
           <div className="stat-card-sub warn">
             <HiOutlineExclamation /> Conditional
           </div>
@@ -121,19 +121,19 @@ export default function Dashboard() {
             <AreaChart data={bugTrendData} margin={{ top: 15, right: 10, left: -15, bottom: 0 }}>
               <defs>
                 <linearGradient id="forecastShade" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.2} />
-                  <stop offset="100%" stopColor="#f59e0b" stopOpacity={0} />
+                  <stop offset="0%" stopColor="#000000" stopOpacity={0.2} />
+                  <stop offset="100%" stopColor="#000000" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" vertical={false} />
               <XAxis
                 dataKey="date"
-                tick={{ fontSize: 11, fill: '#475569' }}
+                tick={{ fontSize: 11, fill: '#000000' }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 11, fill: '#475569' }}
+                tick={{ fontSize: 11, fill: '#000000' }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -141,7 +141,7 @@ export default function Dashboard() {
               <Area
                 type="monotone"
                 dataKey="actual"
-                stroke="#22d3ee"
+                stroke="#D32F2F"
                 strokeWidth={2}
                 fill="none"
                 name="Actual"
@@ -151,13 +151,13 @@ export default function Dashboard() {
               <Area
                 type="monotone"
                 dataKey="forecast"
-                stroke="#f59e0b"
+                stroke="#000000"
                 strokeWidth={2}
                 strokeDasharray="6 4"
                 fill="url(#forecastShade)"
                 name="AI Forecast"
                 connectNulls={false}
-                dot={{ r: 4, fill: '#f59e0b', stroke: '#0f172a', strokeWidth: 1 }}
+                dot={{ r: 4, fill: '#000000', stroke: '#0f172a', strokeWidth: 1 }}
               />
             </AreaChart>
           </ResponsiveContainer>

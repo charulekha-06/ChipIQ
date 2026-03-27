@@ -78,8 +78,8 @@ export default function BugPrediction() {
               <AreaChart data={forecastData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorForecast" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#000000" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#000000" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <XAxis 
@@ -94,9 +94,9 @@ export default function BugPrediction() {
                   tickLine={false} 
                   tick={{ fill: '#64748b', fontSize: 10 }}
                 />
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
                 <Tooltip 
-                  contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                  contentStyle={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '8px' }}
                   itemStyle={{ fontSize: '12px' }}
                 />
                 
@@ -105,7 +105,7 @@ export default function BugPrediction() {
                   type="monotone" 
                   dataKey="upper" 
                   stroke="none" 
-                  fill="#f59e0b" 
+                  fill="#000000" 
                   fillOpacity={0.05} 
                   connectNulls 
                 />
@@ -113,7 +113,7 @@ export default function BugPrediction() {
                   type="monotone" 
                   dataKey="lower" 
                   stroke="none" 
-                  fill="#f59e0b" 
+                  fill="#000000" 
                   fillOpacity={0.05} 
                   connectNulls 
                 />
@@ -131,7 +131,7 @@ export default function BugPrediction() {
                 <Area 
                   type="monotone" 
                   dataKey="predicted" 
-                  stroke="#f59e0b" 
+                  stroke="#000000" 
                   strokeWidth={2} 
                   strokeDasharray="5 5" 
                   fill="url(#colorForecast)" 

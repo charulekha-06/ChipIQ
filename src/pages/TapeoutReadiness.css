@@ -26,7 +26,7 @@
 .panel-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #000000;
   letter-spacing: 1px;
   margin-bottom: 40px;
 }
@@ -39,7 +39,7 @@
 }
 
 .gauge-bg {
-  stroke: rgba(255, 255, 255, 0.05);
+  stroke: transparent;
   stroke-width: 10;
   fill: none;
 }
@@ -75,7 +75,7 @@
 .gauge-label {
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: #000000;
   margin-top: 8px;
 }
 
@@ -87,7 +87,7 @@
 }
 
 .gauge-status-text .dim {
-  color: var(--text-dim);
+  color: #000000;
 }
 
 /* Right Panel Details */
@@ -109,21 +109,21 @@
 .row-label {
   width: 100px;
   font-size: 13px;
-  color: var(--text-dim);
+  color: #000000;
 }
 
 .row-bar-bg {
   flex: 1;
   height: 8px;
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   border-radius: 4px;
   overflow: hidden;
 }
 
 .row-bar-fill { height: 100%; border-radius: 4px; }
 .row-bar-fill.blue { background: #3b82f6; }
-.row-bar-fill.cyan { background: #22d3ee; }
-.row-bar-fill.red { background: #ef4444; }
+.row-bar-fill.cyan { background: #D32F2F; }
+.row-bar-fill.red { background: #D32F2F; }
 
 .row-value {
   width: 40px;
@@ -133,8 +133,8 @@
 }
 
 .row-value.blue { color: #3b82f6; }
-.row-value.cyan { color: #22d3ee; }
-.row-value.red { color: #ef4444; }
+.row-value.cyan { color: #D32F2F; }
+.row-value.red { color: #D32F2F; }
 
 /* Checklist */
 .checklist-container {
@@ -145,7 +145,7 @@
 }
 
 .checklist-item {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0.02);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-md);
   padding: 14px 16px;
@@ -155,15 +155,15 @@
 }
 
 .check-icon { font-size: 20px; flex-shrink: 0; }
-.checklist-item.pass .check-icon { color: #22c55e; }
-.checklist-item.warn .check-icon { color: #f59e0b; }
-.checklist-item.fail .check-icon { color: #ef4444; }
+.checklist-item.pass .check-icon { color: #111111; }
+.checklist-item.warn .check-icon { color: #000000; }
+.checklist-item.fail .check-icon { color: #D32F2F; }
 
 .checklist-item.warn { background: rgba(245, 158, 11, 0.02); border-color: rgba(245, 158, 11, 0.1); }
 .checklist-item.fail { background: rgba(239, 68, 68, 0.02); border-color: rgba(239, 68, 68, 0.1); }
 
 .check-title { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
-.check-sub { font-size: 11px; color: var(--text-muted); }
+.check-sub { font-size: 11px; color: #000000; }
 
 /* Recommendations */
 .recommendations-section h3 {
@@ -206,6 +206,6 @@
   line-height: 1.6;
 }
 
-.orange { color: #f59e0b; }
+.orange { color: #000000; }
 .purple { color: #a855f7; }
-.cyan { color: #22d3ee; }
+.cyan { color: #D32F2F; }

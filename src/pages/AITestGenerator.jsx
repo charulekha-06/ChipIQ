@@ -121,7 +121,7 @@ export default function AITestGenerator() {
   return (
     <div className="ai-container">
       <div className="ai-header">
-        <h1 className="ai-title"><HiOutlineSparkles color="#00E5FF" /> AI Test Generator</h1>
+        <h1 className="ai-title"><HiOutlineSparkles color="#D32F2F" /> AI Test Generator</h1>
         <p className="ai-subtitle">Transform natural language into production-ready SystemVerilog & UVM testbenches.</p>
       </div>
 
@@ -136,7 +136,7 @@ export default function AITestGenerator() {
             )}
             
             {log.type === 'greeting' && (
-              <div style={{ color: '#c9d1d9', lineHeight: 1.5 }}>{log.content}</div>
+              <div style={{ color: '#111111', lineHeight: 1.5 }}>{log.content}</div>
             )}
 
             {log.type === 'loading' && (
@@ -152,7 +152,7 @@ export default function AITestGenerator() {
                 <div className="code-header">
                   <span>SystemVerilog (UVM)</span>
                   <button className="copy-btn" onClick={() => handleCopy(log.content, index)}>
-                    {copiedIndex === index ? <HiCheck color="#3FB950" size={16} /> : <HiOutlineClipboardCopy size={16} />}
+                    {copiedIndex === index ? <HiCheck color="#111111" size={16} /> : <HiOutlineClipboardCopy size={16} />}
                     {copiedIndex === index ? 'Copied!' : 'Copy Code'}
                   </button>
                 </div>

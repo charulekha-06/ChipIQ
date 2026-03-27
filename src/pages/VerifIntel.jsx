@@ -2,10 +2,10 @@ import { HiOutlineArrowRight, HiOutlineCheck } from 'react-icons/hi';
 import './VerifIntel.css';
 
 const bottlenecks = [
-  { mod: 'USB_PHY', pct: 40, label: '40% of all failures', color: '#ef4444' },
+  { mod: 'USB_PHY', pct: 40, label: '40% of all failures', color: '#D32F2F' },
   { mod: 'CPU_CORE', pct: 28, label: '28% - coverage gaps', color: '#f97316' },
   { mod: 'DDR_CTRL', pct: 18, label: '18% - timing + ECC', color: '#eab308' },
-  { mod: 'PCIe_MAC', pct: 9, label: '9% - link training', color: '#22d3ee' },
+  { mod: 'PCIe_MAC', pct: 9, label: '9% - link training', color: '#D32F2F' },
   { mod: 'Others', pct: 5, label: '5% - minor issues', color: '#64748b' },
 ];
 

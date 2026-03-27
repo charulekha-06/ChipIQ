@@ -95,7 +95,7 @@ export default function Navbar({ user, onLogout }) {
             </NavLink>
           ))}
           {restrictedCount > 0 && (
-            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', fontSize: '13px', color: '#8b949e', paddingRight: '20px' }}>
+            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', fontSize: '13px', color: '#000000', paddingRight: '20px' }}>
               🔒 {restrictedCount} restricted
             </div>
           )}

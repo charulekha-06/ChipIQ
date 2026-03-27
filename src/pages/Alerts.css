@@ -12,7 +12,7 @@
 .filter-tab {
   background: var(--bg-card);
   border: 1px solid var(--border-card);
-  color: var(--text-dim);
+  color: #000000;
   padding: 8px 16px;
   border-radius: var(--radius-md);
   font-size: 13px;
@@ -28,7 +28,7 @@
 }
 
 .filter-tab:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   color: var(--text-primary);
 }
 
@@ -50,7 +50,7 @@
 .date-header {
   font-size: 10px;
   font-weight: 800;
-  color: #475569;
+  color: #000000;
   letter-spacing: 1px;
   margin-bottom: 16px;
 }
@@ -65,7 +65,7 @@
   display: flex;
   gap: 16px;
   padding: 20px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid transparent;
 }
 
 .alert-item:last-child {
@@ -80,8 +80,8 @@
   flex-shrink: 0;
 }
 
-.alert-dot.red { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
-.alert-dot.orange { background: #f59e0b; }
+.alert-dot.red { background: #D32F2F; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+.alert-dot.orange { background: #000000; }
 
 .alert-main {
   flex: 1;
@@ -104,15 +104,15 @@
 
 .alert-time {
   font-size: 11px;
-  color: var(--text-dim);
+  color: #000000;
   margin-right: 16px;
   margin-top: 2px;
 }
 
 .dismiss-btn {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--border-card);
-  color: var(--text-dim);
+  color: #000000;
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 11px;
@@ -121,7 +121,7 @@
 }
 
 .dismiss-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   color: var(--text-primary);
 }
 
@@ -129,8 +129,8 @@
   display: inline-block;
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.05);
+  color: #000000;
+  background: transparent;
   padding: 2px 8px;
   border-radius: 4px;
 }

@@ -12,12 +12,12 @@ import { TbBugOff, TbAnalyze } from 'react-icons/tb';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { loadIntegrationData, moduleStatusToColor, toBugTrendSeries } from '../services/integrationData';
+import { getAlertsFeed, loadIntegrationData, moduleStatusToColor, toBugTrendSeries } from '../services/integrationData';
 import './Dashboard.css';
 
 const clampPct = (value) => Math.max(0, Math.min(100, value));
 
-const alerts = [
+const fallbackAlerts = [
   { text: 'P0 regression failure in USB_PHY TX path', module: 'USB_PHY', time: '2m ago', status: 'red' },
   { text: 'CPU_CORE branch coverage below threshold', module: 'CPU_CORE', time: '18m ago', status: 'red' },
   { text: 'Critical bug #291 approaching 7-day SLA', module: 'DDR_CTRL', time: '45m ago', status: 'red' },
@@ -48,6 +48,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function Dashboard() {
   const [integration, setIntegration] = useState(null);
+  const [alerts, setAlerts] = useState(fallbackAlerts);
   const isLoading = integration === null;
 
   useEffect(() => {
@@ -57,6 +58,25 @@ export default function Dashboard() {
         setIntegration(data);
       }
     });
+
+    getAlertsFeed(false)
+      .then((rows) => {
+        if (!mounted || !Array.isArray(rows) || rows.length === 0) {
+          return;
+        }
+        setAlerts(
+          rows.slice(0, 8).map((a) => ({
+            text: a.text,
+            module: a.module,
+            time: a.time,
+            status: a.status,
+          }))
+        );
+      })
+      .catch(() => {
+        // Keep static fallback list when backend alert API is unavailable.
+      });
+
     return () => {
       mounted = false;
     };

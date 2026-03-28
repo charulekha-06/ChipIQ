@@ -10,8 +10,11 @@ ChipIQ backend
 import base64
 import json
 import os
+import smtplib
 from pathlib import Path
 from io import BytesIO
+from datetime import datetime, timezone
+from email.message import EmailMessage
 
 import cv2
 import numpy as np
@@ -85,6 +88,362 @@ etl_pipeline = SparkEtlPipeline(INTEGRATED_DATA_DIR)
 
 # ─── Connector state ────────────────────────────────────────────────────────
 active_connector = None
+alert_cache = []
+
+
+def _normalize_table_kind(table_name: str, connector_type: str | None = None):
+    t = str(table_name or "").lower()
+    c = str(connector_type or "").lower()
+
+    if c == "logs" or "log" in t:
+        return "logs"
+    if c == "coverage" or "coverage" in t:
+        return "coverage"
+    if c == "regression" or "regression" in t or "test" in t:
+        return "regression"
+    if c == "jira" or "bug" in t or "issue" in t:
+        return "bugs"
+    return "generic"
+
+
+def _topic_for_raw(table_name: str, connector_type: str | None = None):
+    kind = _normalize_table_kind(table_name=table_name, connector_type=connector_type)
+    if kind == "logs":
+        return os.getenv("KAFKA_TOPIC_LOGS_RAW", "logs.raw")
+    if kind == "bugs":
+        return os.getenv("KAFKA_TOPIC_BUGS_RAW", "bugs.raw")
+    if kind == "coverage":
+        return os.getenv("KAFKA_TOPIC_COVERAGE_RAW", "coverage.raw")
+    if kind == "regression":
+        return os.getenv("KAFKA_TOPIC_REGRESSION_RAW", "regression.raw")
+    return os.getenv("KAFKA_TOPIC_INGESTION", "chipiq.ingestion.raw")
+
+
+def _publish_raw_rows(table_name: str, rows: list[dict], connector_type: str | None = None):
+    if not rows:
+        return
+
+    topic = _topic_for_raw(table_name=table_name, connector_type=connector_type)
+    max_rows = 500
+
+    for row in rows[:max_rows]:
+        event_bus.publish(
+            topic=topic,
+            key=f"{connector_type or 'upload'}:{table_name}",
+            payload={
+                "eventType": "raw_row",
+                "connectorType": connector_type or "upload",
+                "tableName": table_name,
+                "payload": row,
+            },
+        )
+
+
+def _timescale_rows_or_none(source_table: str, limit: int = 500):
+    result = timescale_store.fetch_recent(source_table, limit=limit)
+    if not result.get("success"):
+        return None
+    rows = result.get("rows", [])
+    if not isinstance(rows, list) or not rows:
+        return None
+    rows = list(reversed(rows))
+    for row in rows:
+        if isinstance(row, dict):
+            row.pop("event_time", None)
+    return rows
+
+
+def _load_payload_with_timescale_fallback(payload_name: str, default_value):
+    timescale_mapping = {
+        "bug_trend_monthly": ["curated_bug_trend_monthly", "bug_trend_monthly"],
+        "regression_results": ["curated_regression_results", "regression_results"],
+        "coverage_data": ["curated_coverage_data", "coverage_data"],
+        "bug_reports_inferred": ["curated_bug_reports_inferred", "bug_reports_inferred"],
+        "rtl_commits": ["curated_rtl_commits", "rtl_commits"],
+        "module_summary": ["curated_module_summary", "module_summary"],
+        "dataset_summary": ["curated_dataset_summary", "dataset_summary"],
+    }
+
+    candidates = timescale_mapping.get(payload_name, [])
+    for source_table in candidates:
+        rows = _timescale_rows_or_none(source_table)
+        if rows is not None:
+            if payload_name == "dataset_summary":
+                return rows[-1] if rows else default_value
+            return rows
+
+    uploaded_df = data_store.get_data_table(payload_name)
+    if uploaded_df is not None and not uploaded_df.empty:
+        records = uploaded_df.to_dict(orient="records")
+        if payload_name == "dataset_summary":
+            return records[0] if records else default_value
+        return records
+
+    return read_integrated_json(payload_name, default_value)
+
+
+def _read_alert_threshold(name: str, default: float):
+    try:
+        return float(str(os.getenv(name, str(default))).strip())
+    except Exception:
+        return float(default)
+
+
+def _humanize_seconds(delta_seconds: float):
+    if delta_seconds < 60:
+        return "just now"
+    if delta_seconds < 3600:
+        return f"{int(delta_seconds // 60)}m ago"
+    if delta_seconds < 86400:
+        return f"{int(delta_seconds // 3600)}h ago"
+    return f"{int(delta_seconds // 86400)}d ago"
+
+
+def _status_from_severity(severity: str):
+    s = str(severity or "").lower()
+    if s == "critical":
+        return "red"
+    if s == "high":
+        return "orange"
+    return "orange"
+
+
+def _now_iso():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _notify_slack(alert):
+    if str(os.getenv("ALERT_SLACK_ENABLED", "false")).strip().lower() not in {"1", "true", "yes", "on"}:
+        return {"sent": False, "reason": "slack_disabled"}
+
+    webhook = str(os.getenv("SLACK_WEBHOOK_URL", "")).strip()
+    if not webhook:
+        return {"sent": False, "reason": "missing_webhook"}
+
+    try:
+        import requests
+
+        resp = requests.post(
+            webhook,
+            json={"text": f"[{alert.get('severity')}] {alert.get('text')} ({alert.get('module')})"},
+            timeout=8,
+        )
+        return {"sent": resp.status_code in {200, 201, 202}, "status": resp.status_code}
+    except Exception as exc:
+        return {"sent": False, "reason": str(exc)}
+
+
+def _notify_email(alert):
+    if str(os.getenv("ALERT_EMAIL_ENABLED", "false")).strip().lower() not in {"1", "true", "yes", "on"}:
+        return {"sent": False, "reason": "email_disabled"}
+
+    host = str(os.getenv("SMTP_HOST", "")).strip()
+    username = str(os.getenv("SMTP_USERNAME", "")).strip()
+    password = str(os.getenv("SMTP_PASSWORD", "")).strip()
+    sender = str(os.getenv("ALERT_EMAIL_FROM", username)).strip()
+    target = str(os.getenv("ALERT_EMAIL_TO", "")).strip()
+    port = int(str(os.getenv("SMTP_PORT", "587")).strip() or "587")
+
+    if not host or not sender or not target:
+        return {"sent": False, "reason": "smtp_config_incomplete"}
+
+    msg = EmailMessage()
+    msg["Subject"] = f"ChipIQ Alert: {alert.get('severity')} - {alert.get('module')}"
+    msg["From"] = sender
+    msg["To"] = target
+    msg.set_content(f"{alert.get('text')}\nTime: {alert.get('time')}\nSource: {alert.get('source')}")
+
+    try:
+        with smtplib.SMTP(host, port, timeout=10) as smtp:
+            smtp.starttls()
+            if username and password:
+                smtp.login(username, password)
+            smtp.send_message(msg)
+        return {"sent": True}
+    except Exception as exc:
+        return {"sent": False, "reason": str(exc)}
+
+
+def _create_jira_from_alert(alert):
+    if str(os.getenv("ALERT_AUTO_TICKET", "false")).strip().lower() not in {"1", "true", "yes", "on"}:
+        return {"created": False, "reason": "auto_ticket_disabled"}
+
+    base_url = str(os.getenv("JIRA_BASE_URL", "")).strip().rstrip("/")
+    username = str(os.getenv("JIRA_USERNAME", "")).strip()
+    api_token = str(os.getenv("JIRA_API_TOKEN", "")).strip()
+    project_key = str(os.getenv("JIRA_PROJECT_KEY", "")).strip()
+    if not base_url or not username or not api_token or not project_key:
+        return {"created": False, "reason": "jira_config_missing"}
+
+    try:
+        import requests
+
+        issue_payload = {
+            "fields": {
+                "project": {"key": project_key},
+                "summary": f"[Auto Alert] {alert.get('text')}",
+                "description": {
+                    "type": "doc",
+                    "version": 1,
+                    "content": [{"type": "paragraph", "content": [{"type": "text", "text": f"Module: {alert.get('module')}\\nSeverity: {alert.get('severity')}"}]}],
+                },
+                "issuetype": {"name": "Bug"},
+                "priority": {"name": "Highest" if str(alert.get('severity')).lower() == "critical" else "High"},
+                "labels": ["chipiq", "auto-alert"],
+            }
+        }
+
+        resp = requests.post(
+            f"{base_url}/rest/api/3/issue",
+            auth=(username, api_token),
+            headers={"Accept": "application/json", "Content-Type": "application/json"},
+            json=issue_payload,
+            timeout=12,
+        )
+
+        if resp.status_code not in {200, 201}:
+            return {"created": False, "reason": f"jira_http_{resp.status_code}"}
+
+        body = resp.json()
+        key = body.get("key")
+        return {"created": True, "issueKey": key, "ticketUrl": f"{base_url}/browse/{key}" if key else None}
+    except Exception as exc:
+        return {"created": False, "reason": str(exc)}
+
+
+def _evaluate_alerts():
+    rows_bug = _load_payload_with_timescale_fallback("bug_reports_inferred", [])
+    rows_cov = _load_payload_with_timescale_fallback("coverage_data", [])
+    rows_reg = _load_payload_with_timescale_fallback("regression_results", [])
+    rows_trend = _load_payload_with_timescale_fallback("bug_trend_monthly", [])
+
+    coverage_min = _read_alert_threshold("ALERT_COVERAGE_MIN", 80)
+    regression_min = _read_alert_threshold("ALERT_REGRESSION_PASS_MIN", 85)
+    critical_max = _read_alert_threshold("ALERT_CRITICAL_BUGS_MAX", 5)
+    trend_spike_pct = _read_alert_threshold("ALERT_TREND_SPIKE_PCT", 15)
+
+    alerts = []
+    now = datetime.now(timezone.utc)
+
+    critical_bugs = 0
+    for bug in rows_bug if isinstance(rows_bug, list) else []:
+        p = str(bug.get("priority") or bug.get("severity") or "").lower()
+        if p in {"critical", "highest", "p0", "p1", "high"}:
+            critical_bugs += 1
+
+    if critical_bugs > critical_max:
+        alerts.append({
+            "id": f"critical-bugs-{int(now.timestamp())}",
+            "date": "TODAY",
+            "text": f"Critical bug count is {critical_bugs}, above threshold {int(critical_max)}",
+            "module": "BUG_TRACKER",
+            "time": _humanize_seconds(120),
+            "status": "red",
+            "severity": "Critical",
+            "source": "curated_metrics",
+            "createdAt": _now_iso(),
+        })
+
+    coverage_values = []
+    for row in rows_cov if isinstance(rows_cov, list) else []:
+        cov = row.get("average_coverage")
+        if cov is None:
+            cov = row.get("line_coverage")
+        if cov is None:
+            cov = row.get("coverage")
+        try:
+            coverage_values.append(float(cov))
+        except Exception:
+            pass
+
+    if coverage_values:
+        avg_cov = float(sum(coverage_values) / len(coverage_values))
+        if avg_cov < coverage_min:
+            alerts.append({
+                "id": f"coverage-{int(now.timestamp())}",
+                "date": "TODAY",
+                "text": f"Average coverage {avg_cov:.1f}% is below threshold {coverage_min:.1f}%",
+                "module": "COVERAGE",
+                "time": _humanize_seconds(300),
+                "status": "orange",
+                "severity": "High",
+                "source": "curated_metrics",
+                "createdAt": _now_iso(),
+            })
+
+    total_tests = 0
+    passed_tests = 0
+    for row in rows_reg if isinstance(rows_reg, list) else []:
+        status = str(row.get("status") or "").lower()
+        if status in {"passed", "failed"}:
+            total_tests += 1
+            if status == "passed":
+                passed_tests += 1
+
+    if total_tests > 0:
+        pass_rate = 100.0 * (passed_tests / total_tests)
+        if pass_rate < regression_min:
+            alerts.append({
+                "id": f"regression-{int(now.timestamp())}",
+                "date": "TODAY",
+                "text": f"Regression pass rate {pass_rate:.1f}% is below threshold {regression_min:.1f}%",
+                "module": "REGRESSION",
+                "time": _humanize_seconds(420),
+                "status": "orange",
+                "severity": "High",
+                "source": "curated_metrics",
+                "createdAt": _now_iso(),
+            })
+
+    labels, values = _extract_numeric_series_from_rows(rows_trend if isinstance(rows_trend, list) else [])
+    if len(values) >= 2 and values[-2] > 0:
+        pct = ((values[-1] - values[-2]) / values[-2]) * 100.0
+        if pct >= trend_spike_pct:
+            alerts.append({
+                "id": f"trend-{int(now.timestamp())}",
+                "date": "TODAY",
+                "text": f"Bug trend spiked by {pct:.1f}% ({labels[-2]} -> {labels[-1]})",
+                "module": "FORECAST",
+                "time": _humanize_seconds(540),
+                "status": "orange",
+                "severity": "Medium",
+                "source": "curated_metrics",
+                "createdAt": _now_iso(),
+            })
+
+    return alerts
+
+
+def _dispatch_alert_notifications(alerts: list[dict]):
+    outcomes = []
+    for alert in alerts:
+        slack_result = _notify_slack(alert)
+        email_result = _notify_email(alert)
+        jira_result = {"created": False, "reason": "not_critical"}
+        if str(alert.get("severity", "")).lower() == "critical":
+            jira_result = _create_jira_from_alert(alert)
+
+        event_bus.publish(
+            topic=os.getenv("KAFKA_TOPIC_ALERTS", "chipiq.alerts.events"),
+            key="alert_event",
+            payload={
+                "eventType": "alert_generated",
+                "alert": alert,
+                "notifications": {
+                    "slack": slack_result,
+                    "email": email_result,
+                    "jira": jira_result,
+                },
+            },
+        )
+
+        outcomes.append({
+            "alertId": alert.get("id"),
+            "slack": slack_result,
+            "email": email_result,
+            "jira": jira_result,
+        })
+    return outcomes
 
 # ─── Demo users matching frontend ──────────────────────────────────────────
 DEMO_USERS = {
@@ -470,9 +829,18 @@ class EtlRunRequest(BaseModel):
     selected_tables: list[str] | None = None
     persist: bool = True
 
+
+class EtlKafkaRunRequest(BaseModel):
+    max_messages: int = 500
+
 class TimescaleSyncRequest(BaseModel):
     selected_tables: list[str] | None = None
     source: str = "etl"  # etl | uploaded
+
+
+class AlertEvaluateRequest(BaseModel):
+    notify: bool = True
+    overwrite_cache: bool = True
 
 # ─── Routes ────────────────────────────────────────────────────────────────
 
@@ -489,13 +857,13 @@ def root():
 def get_all_integrated_data():
     """Return all integrated payloads (uploaded or default)."""
     result = {
-        "datasetSummary": read_integrated_json("dataset_summary", {}),
-        "moduleSummary": read_integrated_json("module_summary", []),
-        "bugTrendMonthly": read_integrated_json("bug_trend_monthly", []),
-        "regressionResults": read_integrated_json("regression_results", []),
-        "rtlCommits": read_integrated_json("rtl_commits", []),
-        "coverageData": read_integrated_json("coverage_data", []),
-        "bugReportsInferred": read_integrated_json("bug_reports_inferred", []),
+        "datasetSummary": _load_payload_with_timescale_fallback("dataset_summary", {}),
+        "moduleSummary": _load_payload_with_timescale_fallback("module_summary", []),
+        "bugTrendMonthly": _load_payload_with_timescale_fallback("bug_trend_monthly", []),
+        "regressionResults": _load_payload_with_timescale_fallback("regression_results", []),
+        "rtlCommits": _load_payload_with_timescale_fallback("rtl_commits", []),
+        "coverageData": _load_payload_with_timescale_fallback("coverage_data", []),
+        "bugReportsInferred": _load_payload_with_timescale_fallback("bug_reports_inferred", []),
     }
     
     # Add upload status
@@ -510,7 +878,7 @@ def get_integrated_payload(payload_name: str):
     if payload_name not in DATASET_FILES:
         raise HTTPException(status_code=404, detail=f"Unknown payload: {payload_name}")
     default_value = {} if payload_name == "dataset_summary" else []
-    return read_integrated_json(payload_name, default_value)
+    return _load_payload_with_timescale_fallback(payload_name, default_value)
 
 
 # ─── Dynamic Upload API ────────────────────────────────────────────────────
@@ -523,17 +891,23 @@ async def upload_data_file(file: UploadFile = File(...)):
         result = data_store.upload_file(file.filename, contents)
 
         if result.get("success"):
+            table_name = result.get("table_name")
+            df = data_store.get_data_table(table_name)
+            rows = df.to_dict(orient="records") if df is not None else []
+
             event_bus.publish(
-                topic=os.getenv("KAFKA_TOPIC_INGESTION", "chipiq.ingestion.raw"),
+                topic=_topic_for_raw(table_name=table_name, connector_type="upload"),
                 key="file_upload",
                 payload={
                     "eventType": "file_upload",
                     "filename": file.filename,
-                    "tableName": result.get("table_name"),
+                    "tableName": table_name,
                     "rows": result.get("file_info", {}).get("rows"),
                     "columns": result.get("file_info", {}).get("columns"),
                 },
             )
+
+            _publish_raw_rows(table_name=table_name, rows=rows, connector_type="upload")
 
         return result
     except Exception as e:
@@ -604,6 +978,34 @@ def run_etl(request: EtlRunRequest):
         },
     )
 
+    if str(os.getenv("TIMESCALE_AUTO_SYNC", "false")).strip().lower() in {"1", "true", "yes", "on"}:
+        for curated_name in result.get("curatedTables", []):
+            df = etl_pipeline.get_table(curated_name)
+            if df is None:
+                continue
+            timescale_store.sync_rows(curated_name, df.to_dict(orient="records"))
+
+    return result
+
+
+@app.post("/api/etl/run-from-kafka")
+def run_etl_from_kafka(request: EtlKafkaRunRequest):
+    """Consume raw Kafka topics and build curated ETL tables."""
+    max_messages = max(1, min(5000, int(request.max_messages)))
+    result = etl_pipeline.run_from_kafka_raw(max_messages=max_messages)
+    if not result.get("success"):
+        raise HTTPException(status_code=400, detail=result.get("message", "Kafka ETL failed"))
+
+    event_bus.publish(
+        topic=os.getenv("KAFKA_TOPIC_ETL", "chipiq.etl.events"),
+        key="etl_run_kafka",
+        payload={
+            "eventType": "etl_kafka_run_completed",
+            "tablesProcessed": result.get("tablesProcessed", 0),
+            "curatedTables": result.get("curatedTables", []),
+            "kafkaMessagesConsumed": result.get("kafkaMessagesConsumed", 0),
+        },
+    )
     return result
 
 
@@ -692,13 +1094,40 @@ def get_timescale_table(table_name: str, limit: int = 200):
     return result
 
 
-    # Optional auto-sync curated tables into TimescaleDB.
-    if str(os.getenv("TIMESCALE_AUTO_SYNC", "false")).strip().lower() in {"1", "true", "yes", "on"}:
-        for curated_name in result.get("curatedTables", []):
-            df = etl_pipeline.get_table(curated_name)
-            if df is None:
-                continue
-            timescale_store.sync_rows(curated_name, df.to_dict(orient="records"))
+@app.get("/api/alerts")
+def get_alerts(refresh: bool = True):
+    """Return alert feed used by dashboard/alerts pages."""
+    global alert_cache
+
+    if refresh or not alert_cache:
+        generated = _evaluate_alerts()
+        alert_cache = generated
+    return {
+        "success": True,
+        "count": len(alert_cache),
+        "alerts": alert_cache,
+    }
+
+
+@app.post("/api/alerts/evaluate")
+def evaluate_alerts(request: AlertEvaluateRequest):
+    """Evaluate threshold rules and optionally dispatch notifications."""
+    global alert_cache
+
+    generated = _evaluate_alerts()
+    if request.overwrite_cache:
+        alert_cache = generated
+
+    notifications = []
+    if request.notify:
+        notifications = _dispatch_alert_notifications(generated)
+
+    return {
+        "success": True,
+        "alerts": generated,
+        "count": len(generated),
+        "notifications": notifications,
+    }
 
 @app.get("/api/rca/latest-log")
 def get_latest_log_for_rca():
@@ -844,7 +1273,7 @@ async def ingest_from_source(connector_type: str):
         }
 
         event_bus.publish(
-            topic=os.getenv("KAFKA_TOPIC_INGESTION", "chipiq.ingestion.raw"),
+            topic=_topic_for_raw(table_name=table_name, connector_type=connector_type),
             key=f"connector:{connector_type}",
             payload={
                 "eventType": "connector_ingest",
@@ -854,6 +1283,8 @@ async def ingest_from_source(connector_type: str):
                 "columns": list(df.columns),
             },
         )
+
+        _publish_raw_rows(table_name=table_name, rows=data if isinstance(data, list) else [], connector_type=connector_type)
         
         return {
             "success": True,
@@ -1152,4 +1583,9 @@ def health():
         "event_bus": event_bus.health(),
         "etl": etl_pipeline.status(),
         "timescale": timescale_store.status(),
+        "alerts": {
+            "cached": len(alert_cache),
+            "slackEnabled": str(os.getenv("ALERT_SLACK_ENABLED", "false")).strip().lower() in {"1", "true", "yes", "on"},
+            "emailEnabled": str(os.getenv("ALERT_EMAIL_ENABLED", "false")).strip().lower() in {"1", "true", "yes", "on"},
+        },
     }

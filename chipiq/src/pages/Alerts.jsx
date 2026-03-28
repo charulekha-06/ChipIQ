@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './Alerts.css';
+import { getAlertsFeed } from '../services/integrationData';
 
-const alertData = [
+const fallbackAlertData = [
   {
     id: 1,
     date: 'TODAY',
@@ -60,11 +61,41 @@ const alertData = [
 
 export default function Alerts() {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [alertData, setAlertData] = useState(fallbackAlertData);
+
+  useEffect(() => {
+    let mounted = true;
+    getAlertsFeed(true)
+      .then((rows) => {
+        if (mounted && Array.isArray(rows) && rows.length > 0) {
+          setAlertData(rows);
+        }
+      })
+      .catch(() => {
+        // Keep static fallback if backend is unavailable.
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const severityCounts = useMemo(() => {
+    const counts = { All: alertData.length, Critical: 0, High: 0, Medium: 0 };
+    alertData.forEach((a) => {
+      const sev = String(a?.severity || '').trim();
+      if (sev in counts) {
+        counts[sev] += 1;
+      }
+    });
+    return counts;
+  }, [alertData]);
+
   const filters = [
-    { label: 'All', count: 7 },
-    { label: 'Critical', count: 3 },
-    { label: 'High', count: 2 },
-    { label: 'Medium', count: 2 }
+    { label: 'All', count: severityCounts.All },
+    { label: 'Critical', count: severityCounts.Critical },
+    { label: 'High', count: severityCounts.High },
+    { label: 'Medium', count: severityCounts.Medium }
   ];
 
   return (

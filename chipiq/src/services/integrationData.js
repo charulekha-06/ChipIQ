@@ -61,6 +61,15 @@ export async function getModelForecast(modelName, horizon = 2) {
   return res.json();
 }
 
+export async function getAlertsFeed(refresh = true) {
+  const res = await fetch(`${API_BASE}/api/alerts?refresh=${refresh ? 'true' : 'false'}`);
+  if (!res.ok) {
+    throw new Error(`Alerts request failed: ${res.status}`);
+  }
+  const data = await res.json();
+  return Array.isArray(data?.alerts) ? data.alerts : [];
+}
+
 export async function loadIntegrationData() {
   try {
     return await loadFromBackend();
